@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>柱状指标-本年话务量-广西</title>
+    <style>
+    #test {
+        width: 80%;
+        height: 400px;
+        margin: 0 auto;
+        background-color:black;
+    }
+
+	 .cls-1, .cls-2 {
+		fill: #6cf;
+	  }
+
+	  .cls-1 {
+		fill-opacity: 0.05;
+	  }
+
+	  .cls-2, .cls-3, .cls-4 {
+		fill-rule: evenodd;
+	  }
+
+	  .cls-2 {
+		filter: url(#filter);
+	  }
+
+	  .cls-3 {
+		opacity: 0.4;
+	  }
+
+	  .cls-3, .cls-4 {
+		fill: url(#linear-gradient);
+	  }
+
+	  .cls-5 {
+		font-size: 20px;
+		opacity: 0.8;
+		fill: #fff;
+		font-family: "Microsoft YaHei";
+	  }
+    </style>
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="211" viewBox="0 0 100 211">
+<defs>		
+    <filter id="filter" x="86" y="238" width="99" height="187" filterUnits="userSpaceOnUse">
+      <feGaussianBlur result="blur" stdDeviation="3.333" in="SourceAlpha"/>
+      <feComposite result="composite"/>
+      <feComposite result="composite-2"/>
+      <feComposite result="composite-3"/>
+      <feFlood result="flood" flood-color="#6cf" flood-opacity="0.4"/>
+      <feComposite result="composite-4" operator="in" in2="composite-3"/>
+      <feBlend result="blend" in2="SourceGraphic"/>
+      <feBlend result="blend-2" in="SourceGraphic"/>
+    </filter>
+    <linearGradient id="linear-gradient" x1="135" y1="407" x2="135" y2="255" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f2fef"/>
+      <stop offset="0.2" stop-color="#526fff"/>
+      <stop offset="0.4" stop-color="#5fafff"/>
+      <stop offset="0.6" stop-color="#65e5ff"/>
+      <stop offset="1" stop-color="#cff"/>
+    </linearGradient>
+  </defs>
+  <rect class="cls-1" x="10" y="13" width="80" height="168"/>
+  <path class="cls-2" d="M95,247h6v2H95v-2Zm0,0h2v6H95v-6Zm78,0h2v6h-2v-6Zm-4,0h6v2h-6v-2ZM95,413h6v2H95v-2Zm0-4h2v6H95v-6Zm78,0h2v6h-2v-6Zm-4,4h6v2h-6v-2Z" transform="translate(-85 -234)"/>
+  <g id="baseGroup" data-name="baseGroup">
+    <path id="baseBar1" class="cls-3" transform="translate(-85 -234)"/>
+    <path id="baseBar2" class="cls-4" transform="translate(-85 -234)"/>
+  </g>
+  <text id="text1" class="cls-5" y="208">人工话务量</text>
+</svg>
+
+</div>
+
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <!--
+    <div style="color: #fff">
+        <input type="radio" name="flag" value="0" checked>顺
+        <input type="radio" name="flag" value="1">逆
+    </div>
+    -->
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range"/>
+    </div>
+    <button id="change">变</button>
+</div>
+
+<script src="../../js/d3.js"></script>
+<script>
+/*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    */
+    function draw(paramsObj) {
+        var id = paramsObj.id;
+        var progress = paramsObj.value;
+        var path = d3.select('#baseGroup').selectAll("path");
+        //path.attr('data-value', progress);
+		var linear = d3.scaleLinear().domain([0,100]).range([0,156]);
+		var intVal =parseInt(linear(progress)/12);
+		var anotherVal =linear(progress)%12;
+		var basePath = 'h48v8H111v-8Zm0-12';
+		var reStr = repeatStr(basePath,intVal);
+		var baseD = 'M111,399'+reStr.substring(0,(reStr.length-3))+lastStr(anotherVal);
+		path.attr('data', 0)
+			.transition().duration(5000).ease(d3.easeLinear)
+			.attr('data',progress).attr('d',baseD)
+		
+		function repeatStr(str,num){
+			return new Array(num+1).join(str);
+		}
+		/*计算最后高度*/
+		function lastStr(val){
+			if(!val){
+				return ''
+			}
+			var num = val>8?8:(Math.round(val));
+			return intVal>0?'-'+(num+4)+'h48v'+num+'H111v-8Z':'h48v'+num+'H111v-8Z';
+		}
+		function valTween(){
+			var interpolate = d3.scaleQuantize() // <-C 
+            .domain([0, 1]) 
+            .range(0,80); 
+ 
+             return function(t){ // <-D 
+             return interpolate(t); 
+        }; 
+		}
+    }
+
+    var btn = document.getElementById('change');
+    draw({id: "#test", value: 80});
+    btn.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        range.value = input;
+        draw({id: "#test", value: input});
+    }, false);
+    range.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range.value;
+        draw({id: "#test", value: range.value});
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘</title>
+    <style>
+        body {
+            background: #140f51;
+        }
+
+        #test {
+            width: 80%;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        #myForm {
+            position: absolute;
+            left: 30%;
+            top: 60%;
+        }
+
+        #myForm div {
+            margin: 20px 0;
+        }
+
+        .pointer {
+            filter: url(#outer-glow-1);
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 600 600">
+        <defs>
+            <filter id="outer-glow-1" filterUnits="userSpaceOnUse">
+                <feGaussianBlur stdDeviation="16.667" in="SourceAlpha"/>
+                <feComposite/>
+                <feComposite/>
+                <feComposite result="outerGlowBlur"/>
+                <feFlood flood-color="#ffd54f" flood-opacity="0.5"/>
+                <feComposite operator="in" in2="outerGlowBlur"/>
+                <feBlend in2="SourceGraphic" result="outerGlow"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+            </filter>
+        </defs>
+    </svg>
+</div>
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range1"/>
+    </div>
+    <button id="change">变</button>
+</div>
+<script src="../../js/d3.js"></script>
+<script>
+    /*
+    *  @param id  id值，如本例使用的#test
+    */
+    function draw(paramsObj) {
+        var path = paramsObj.id;
+        var value = 0;
+        var cx = 300,
+            cy = 300,
+            minorTicks = 9,
+            majorTicks = 5,
+            majorDelta = 100 / (majorTicks - 1);//大刻度之间的距离
+        var svg = d3.select(path).select("svg")
+            .attr("class", "gauge")      //添加类名gauge
+
+        svg.append("svg:path")             //添加路径
+            .style("fill", "#fff")
+            .attr("d", d3.arc()  //添加圆弧
+                .startAngle(valueToRadians(0))
+                //开始弧度
+                .endAngle(valueToRadians(100))
+                //结束弧度
+                .innerRadius(0.55 * 300)  //内圈半径
+                .outerRadius(0.55 * 300 + 6))  //外圈半径
+            .attr("transform", function () {//移动+旋转
+                return "translate(" + cx + ", " + cy + ") rotate(270)"
+            });
+
+        svg.append("svg:text")         //添加文本
+            .attr("class", "middleText")
+            .attr("x", cx)              //文本位置
+            .attr("y", cy)
+            .attr("dy", 70 / 2)
+            .attr("text-anchor", "middle")//文字角度
+            .text(Math.round(value * 100) / 100 + "%")                 //文字内容
+            .style("font-size", 70 + "px")//字体大小
+            .style("fill", "#fff")        //颜色
+            .style("stroke-width", "0px");
+
+        for (var i = 0; i <= 100; i += majorDelta) {
+            //循环每个大刻度
+            var minorDelta = majorDelta / minorTicks;//小刻度之间的距离
+            for (var j = i + minorDelta; j < Math.min(i + majorDelta, 100); j += minorDelta) {      //循环每个小刻度
+                var point1 = valueToPoint(j, 0.75);
+                var point2 = valueToPoint(j, 0.85);
+                //获取小刻度线的（x1,y1）(x2,y2)位置
+                //添加小刻度线
+                svg.append("svg:line")
+                    .attr("x1", point1.x) //小刻度线的两点坐标
+                    .attr("y1", point1.y)
+                    .attr("x2", point2.x)
+                    .attr("y2", point2.y)
+                    .style("stroke", "#fff")//小刻度线颜色
+                    .style("stroke-width", "1px");//小刻度的宽度
+            }
+            //获取大刻度线的（x1,y1）(x2,y2)位置
+            var point3 = valueToPoint(i, 0.7);
+            var point4 = valueToPoint(i, 0.85);
+            //添加大刻度线
+            svg.append("svg:line")
+                .attr("x1", point3.x)
+                .attr("y1", point3.y)
+                .attr("x2", point4.x)
+                .attr("y2", point4.y)
+                .style("stroke", "#fff")
+                .style("stroke-width", "2px");
+            // 增加刻度值
+            var point = valueToPoint(i, 0.63);
+            svg.append("svg:text")
+                .attr("x", point.x)
+                .attr("y", point.y)
+                .attr("dy", 4)
+                .attr("text-anchor", "middle")
+                .text(i)
+                .style("font-size", 20 + "px")
+                .style("fill", "#fff")
+                .style("stroke-width", "0px")
+        }
+
+        var yellowPoint = valueToPoint(Math.round(value * 100) / 100, 0.56);
+        svg.append("svg:circle")
+            .attr("class", "pointer")
+            .attr("cx", yellowPoint.x)
+            .attr("cy", yellowPoint.y)
+            .attr("r", 10)
+            .style("fill", "#ffd54f")
+    }
+
+    /*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    */
+    function redraw(paramsObj) {
+        var path = paramsObj.id;
+        var value = paramsObj.value;
+        var svg = d3.select(path).select("svg");
+        var pointer = svg.select(".pointer");
+        var duration = 1000;
+
+        var currentValue = svg.attr("data-value") || 0;
+        svg.attr('data-value', value);
+        var currentPoint = (valueToDegrees(currentValue) + 45);
+        //小球移动
+        pointer.transition()
+            .duration(duration)//持续时间
+            .attrTween("transform", function () {
+                var pointerValue = value;
+                //判断超出量程的问题
+                if (value >= 100) pointerValue = 100;
+                else if (value <= 0) pointerValue = 0;
+
+                var targetRotation = (valueToDegrees(pointerValue) + 45);
+                //现在的角度
+                var currentRotation = currentPoint !== undefined ? currentPoint : targetRotation;
+                currentPoint = targetRotation;
+                return function (step) {
+                    var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                    return " rotate(" + rotation + ", " + 300 + ", " + 300 + ")";   //定义旋转
+                }
+            })
+        d3.select("svg")
+            .selectAll('.middleText')
+            .transition()
+            .duration(duration)
+            .tween("text", tweenText);
+
+        var format = d3.format('d');
+
+        function tweenText() {
+            var i = d3.interpolateNumber(currentValue, value);
+            currentValue = value;
+            return function (t) {
+                d3.select('text').text(format(i(t)) + "%");
+            };
+        }
+    }
+
+    function valueToRadians(value) {
+        return valueToDegrees(value) * Math.PI / 180;
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 270 - 45;
+    }
+
+    function valueToPoint(value, factor) {
+        return {
+            x: 300 - 300 * factor * Math.cos(valueToRadians(value)),
+            y: 300 - 300 * factor * Math.sin(valueToRadians(value))
+        }
+    }
+</script>
+
+<script>
+    draw({id: "#test"});
+    redraw({id: "#test", value: 50});
+    var btn = document.getElementById('change');
+    btn.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        range1.value = input;
+        redraw({id: "#test", value: input})
+    }, false);
+    range1.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range1.value;
+        redraw({id: "#test", value: input1.value});
+    })
+</script>
+</body>
+</html>

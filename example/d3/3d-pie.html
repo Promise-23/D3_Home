@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>3d饼图</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            width: 960px;
+            height: 500px;
+            position: relative;
+        }
+
+        path.slice {
+            stroke-width: 2px;
+        }
+
+        polyline {
+            opacity: .3;
+            stroke: black;
+            stroke-width: 2px;
+            fill: none;
+        }
+
+        svg text.value {
+            fill: white;
+            text-anchor: middle;
+            font-size: 12px;
+        }
+    </style>
+    <style>
+        #test {
+            width: 250px;
+            height: 200px;
+            margin: 15% 16%;
+        }
+
+        .setting_up {
+            list-style: none;
+            margin-left: -36%;
+        }
+
+        .setting_up li {
+            height: 30px;
+        }
+
+        .setting_up span {
+            display: block;
+            width: 16%;
+            float: left
+        }
+
+        .setting_up input {
+            float: left;
+            width: 70%;
+        }
+
+        .btn {
+            width: 30%;
+            height: 15%;
+            border: 0;
+            background: #0795ce;
+            margin: 10% 35%;
+            transition: all 0.6;
+            border-radius: 3px;
+        }
+
+        .btn:hover {
+            background: #52a9d1;
+        }
+
+        #color {
+            width: 7%;
+        }
+
+        #append_color {
+            width: 30%;
+            height: 25px;
+            float: left;
+            margin: 0 10%;
+        }
+
+        .setting_up .text_color {
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="test">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 285 250"></svg>
+        <p>传入数组格式 例如：“[1,2,3]”</p>
+        <ul class="setting_up">
+            <li>
+                <span>名称：</span><input type="text" id="setting_name">
+            </li>
+            <li>
+                <span>颜色：</span><input type="text" id="setting_color">
+            </li>
+            <li>
+                <input type="color" name="color" id="color">
+                <button class="btn" id="append_color" onclick="append_color()">加入颜色</button>
+            </li>
+            <li>
+                <span>数量：</span><input type="text" id="setting_num">
+            </li>
+        </ul>
+        <button type="button" id="pie_btn" class="btn">确定</button>
+    </div>
+    <script src="../../js/d3.js"></script>
+    <!--<script src="Donut3D.js"></script>-->
+    <script src="../../js/jquery.js"></script>
+    <script>
+        ! function () {
+            var Donut3D = {};
+
+            function pieTop(d, rx, ry, ir) {
+                if (d.endAngle - d.startAngle == 0) return "M 0 0";
+                var sx = rx * Math.cos(d.startAngle),
+                    sy = ry * Math.sin(d.startAngle),
+                    ex = rx * Math.cos(d.endAngle),
+                    ey = ry * Math.sin(d.endAngle);
+
+                var ret = [];
+                ret.push("M", sx, sy, "A", rx, ry, "0", (d.endAngle - d.startAngle > Math.PI ? 1 : 0), "1", ex, ey, "L",
+                    ir * ex, ir * ey);
+                ret.push("A", ir * rx, ir * ry, "0", (d.endAngle - d.startAngle > Math.PI ? 1 : 0), "0", ir * sx, ir *
+                    sy, "z");
+                return ret.join(" ");
+            }
+
+            function pieOuter(d, rx, ry, h) {
+                var startAngle = (d.startAngle > Math.PI ? Math.PI : d.startAngle);
+                var endAngle = (d.endAngle > Math.PI ? Math.PI : d.endAngle);
+
+                var sx = rx * Math.cos(startAngle),
+                    sy = ry * Math.sin(startAngle),
+                    ex = rx * Math.cos(endAngle),
+                    ey = ry * Math.sin(endAngle);
+
+                var ret = [];
+                ret.push("M", sx, h + sy, "A", rx, ry, "0 0 1", ex, h + ey, "L", ex, ey, "A", rx, ry, "0 0 0", sx, sy,
+                    "z");
+                return ret.join(" ");
+            }
+
+            function pieInner(d, rx, ry, h, ir) {
+                var startAngle = (d.startAngle < Math.PI ? Math.PI : d.startAngle);
+                var endAngle = (d.endAngle < Math.PI ? Math.PI : d.endAngle);
+
+                var sx = ir * rx * Math.cos(startAngle),
+                    sy = ir * ry * Math.sin(startAngle),
+                    ex = ir * rx * Math.cos(endAngle),
+                    ey = ir * ry * Math.sin(endAngle);
+
+                var ret = [];
+                ret.push("M", sx, sy, "A", ir * rx, ir * ry, "0 0 1", ex, ey, "L", ex, h + ey, "A", ir * rx, ir * ry,
+                    "0 0 0", sx, h + sy, "z");
+                return ret.join(" ");
+            }
+
+            function getPercent(d) {
+                return (d.endAngle - d.startAngle > 0.2 ?
+                    Math.round(1000 * (d.endAngle - d.startAngle) / (Math.PI * 2)) / 10 + '%' : '');
+            }
+
+            function getValue(d) {
+                return (d.value);
+            }
+
+            Donut3D.transition = function (id, data, rx, ry, h, ir) {
+                function arcTweenInner(a) {
+                    var i = d3.interpolate(this._current, a);
+                    this._current = i(0);
+                    return function (t) {
+                        return pieInner(i(t), rx + 0.5, ry + 0.5, h, ir);
+                    };
+                }
+
+                function arcTweenTop(a) {
+                    var i = d3.interpolate(this._current, a);
+                    this._current = i(0);
+                    return function (t) {
+                        return pieTop(i(t), rx, ry, ir);
+                    };
+                }
+
+                function arcTweenOuter(a) {
+                    var i = d3.interpolate(this._current, a);
+                    this._current = i(0);
+                    return function (t) {
+                        return pieOuter(i(t), rx - .5, ry - .5, h);
+                    };
+                }
+
+                function textTweenX(a) {
+                    var i = d3.interpolate(this._current, a);
+                    this._current = i(0);
+                    return function (t) {
+
+                        return 0.6 * rx * Math.cos(0.5 * (i(t).startAngle + i(t).endAngle));
+                    };
+                }
+
+                function textTweenY(a) {
+                    var i = d3.interpolate(this._current, a);
+                    this._current = i(0);
+                    return function (t) {
+                        return 0.6 * rx * Math.sin(0.5 * (i(t).startAngle + i(t).endAngle)) + 15;
+                    };
+                }
+
+                var _data = d3.pie().sort(null).value(function (d) {
+                    return d.value;
+                })(data);
+
+                /* 内层圆壁的动画效果*/
+                d3.select("#" + id).selectAll(".innerSlice").data(_data)
+                    .transition().duration(750).attrTween("d", arcTweenInner);
+
+                /* 外圈圆的动画效果*/
+                d3.select("#" + id).selectAll(".topSlice").data(_data)
+                    .transition().duration(750).attrTween("d", arcTweenTop);
+
+                /* 外层圆壁的动画效果*/
+                d3.select("#" + id).selectAll(".outerSlice").data(_data)
+                    .transition().duration(750).attrTween("d", arcTweenOuter);
+
+                /* 值的动画效果*/
+                d3.select("#" + id).selectAll(".value").data(_data).transition().duration(750)
+                    .attrTween("x", textTweenX).attrTween("y", textTweenY).text(getValue);
+            }
+
+            /*  id : id,
+                data : 数据,
+                x :center x,
+                y :center y,
+                rx :radius x,
+                ry :radius y,
+                h :height,
+                ir :inner radius*/
+            Donut3D.draw = function (id, data, x, y, rx, ry, h, ir) {
+
+                var _data = d3.pie().sort(null).value(function (d) {
+                    return d.value;
+                })(data);
+
+                var slices = d3.select("#" + id).append("g").attr("transform", "translate(" + x + "," + y + ")")
+                    .attr("class", "slices");
+
+                slices.selectAll(".innerSlice").data(_data).enter().append("path").attr("class", "innerSlice")
+                    .style("fill", function (d) {
+                        return d3.hsl(d.data.color).darker(0.7);
+                    })
+                    .attr("d", function (d) {
+                        return pieInner(d, rx + 0.5, ry + 0.5, h, ir);
+                    })
+                    .each(function (d) {
+                        this._current = d;
+                    });
+
+                slices.selectAll(".topSlice").data(_data).enter().append("path").attr("class", "topSlice")
+                    .style("fill", function (d) {
+                        return d.data.color;
+                    })
+                    .style("stroke", function (d) {
+                        return d.data.color;
+                    })
+                    .attr("d", function (d) {
+                        return pieTop(d, rx, ry, ir);
+                    })
+                    .each(function (d) {
+                        this._current = d;
+                    });
+
+                slices.selectAll(".outerSlice").data(_data).enter().append("path").attr("class", "outerSlice")
+                    .style("fill", function (d) {
+                        return d3.hsl(d.data.color).darker(0.7);
+                    })
+                    .attr("d", function (d) {
+                        return pieOuter(d, rx - .5, ry - .5, h);
+                    })
+                    .each(function (d) {
+                        this._current = d;
+                    });
+
+                slices.selectAll(".value").data(_data).enter().append("text").attr("class", "value")
+                    .attr("x", function (d) {
+                        return 0.6 * rx * Math.cos(0.5 * (d.startAngle + d.endAngle));
+                    })
+                    .attr("y", function (d) {
+                        return 0.6 * ry * Math.sin(0.5 * (d.startAngle + d.endAngle)) + 15;
+                    })
+                    .text(getValue).each(function (d) {
+                        this._current = d;
+                    });
+            }
+
+            this.Donut3D = Donut3D;
+        }();
+    </script>
+    <script>
+        function append_color() {
+            let color = $("#color").val()
+            if ($("#setting_color").val() == "") {
+                $("#setting_color").val('["' + color + '"]')
+            } else {
+                let old_array = $("#setting_color").val().substring(0, $("#setting_color").val().length - 1)
+                old_array = `${old_array},"${color}"]`;
+                $("#setting_color").val(old_array);
+            }
+        }
+        $("#pie_btn").click(function () {
+            var name_val = $("#setting_name").val();
+            var color_val = $("#setting_color").val();
+            var num_val = $("#setting_num").val();
+            if (!name_val || !color_val || !num_val) {
+                alert("输入框不能为空!");
+                return false;
+            }
+            try {
+                if (!JSON.parse(name_val) || !JSON.parse(color_val) || !JSON.parse(num_val)) throw "请输入一个数组！";
+            } catch (error) {
+                alert("请输入一个数组！");
+                return false;
+            }
+            name_val = JSON.parse(name_val);
+            color_val = JSON.parse(color_val);
+            num_val = JSON.parse(num_val);
+            if (color_val.length != num_val.length) {
+                alert("请输入相等的数组长度！")
+            }
+            let new_Data = [];
+            let old_Data = [];
+            for (var i = 0; i < num_val.length; i++) {
+                new_Data.push({
+                    label: name_val[i],
+                    color: color_val[i],
+                    value: num_val[i]
+                });
+                old_Data.push({
+                    label: name_val[i],
+                    color: color_val[i],
+                    value: 1
+                })
+            }
+            let str = "a" + Date.parse(new Date()) //用时间戳生成唯一id
+
+            var svg = d3.select("#test").select("svg");
+
+            svg.append("g").attr("id", str);
+
+            Donut3D.draw(str, old_Data, 140, 110, 130, 100, 30, 0.4);
+
+            Donut3D.transition(str, new_Data, 130, 100, 30, 0.4);
+        })
+        var oldData = [{
+                label: "轻微",
+                color: "#7cb5ec",
+                value: "1"
+            },
+            {
+                label: "一般",
+                color: "#90ec7d",
+                value: "1"
+            },
+            {
+                label: "较大",
+                color: "#f25c81",
+                value: "1"
+            },
+            {
+                label: "重大",
+                color: "#e5d355",
+                value: "1"
+            },
+            {
+                label: "特大",
+                color: "#2c9090",
+                value: "1"
+            }
+        ];
+
+        var newData = [{
+                label: "轻微",
+                color: "#7cb5ec",
+                value: "325"
+            },
+            {
+                label: "一般",
+                color: "#90ec7d",
+                value: "5"
+            },
+            {
+                label: "较大",
+                color: "#f25c81",
+                value: "11"
+            },
+            {
+                label: "重大",
+                color: "#e5d355",
+                value: "41"
+            },
+            {
+                label: "特大",
+                color: "#2c9090",
+                value: "34"
+            }
+        ];
+
+        var svg = d3.select("#test").select("svg");
+
+        svg.append("g").attr("id", "administrativeAccountability");
+        //    svg.append("g").attr("id", "economicAccountability");
+
+        Donut3D.draw("administrativeAccountability", oldData, 140, 110, 130, 100, 30, 0.4);
+        //    Donut3D.draw("economicAccountability", newData, 450, 150, 130, 100, 30, 0.4);
+
+        Donut3D.transition("administrativeAccountability", newData, 130, 100, 30, 0.4);
+        //    Donut3D.transition("economicAccountability", newData, 130, 100, 30, 0);
+    </script>
+</body>
+
+</html>

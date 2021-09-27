@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘</title>
+    <style>
+        body {
+            background: #140f51;
+        }
+
+        #customerAverageOutageTime {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #myForm {
+            position: absolute;
+            left: 20%;
+            top: 60%;
+        }
+
+        #myForm div {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="customerAverageOutageTime">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"
+         width="100%" height="100%" viewBox="0 -20 480 460">
+        <defs>
+            <style>
+                .cls-1 {
+                    fill: #f0a8a8;
+                    filter: url(#gradient-overlay-1);
+                }
+
+                .cls-1, .cls-5 {
+                    fill-rule: evenodd;
+                }
+
+                .cls-2, .cls-3 {
+                    font-size: 16.6609px;
+                }
+
+                .cls-10, .cls-3, .cls-4, .cls-5, .cls-6, .cls-8 {
+                    fill: #fff;
+                }
+
+                .cls-3, .cls-8 {
+                    font-family: "Arial";
+                }
+
+                .cls-4 {
+                    fill-opacity: 0;
+                }
+
+                .cls-5 {
+                    filter: url(#drop-shadow-1);
+                    fill-opacity: 0.2;
+                }
+
+                .cls-6 {
+                    filter: url(#drop-shadow-2);
+                    fill-opacity: 0.5;
+                }
+
+                .cls-7, .cls-8 {
+                    font-size: 55.5364px;
+                    text-anchor: middle;
+                }
+
+                .cls-10, .cls-9 {
+                    font-size: 26.6575px;
+                }
+
+                .cls-10 {
+                    font-family: "Microsoft YaHei";
+                }
+            </style>
+            <filter id="gradient-overlay-1" filterUnits="userSpaceOnUse">
+                <feImage x="319.219" y="10.9688" width="120.094" height="417.3752" preserveAspectRatio="none"
+                         xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTIwLjA5NCIgaGVpZ2h0PSI0MTcuMzc1MiI+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjYwLjA0NyIgeTE9IjQxNy4zNzYiIHgyPSI2MC4wNDciPgogIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzc5ZGM5OSIvPgogIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2UwOWI1NSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIi8+PC9zdmc+"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="SourceGraphic" result="gradientFill"/>
+            </filter>
+            <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+                <feOffset in="SourceAlpha"/>
+                <feGaussianBlur stdDeviation="4.472" result="dropBlur"/>
+                <feFlood flood-opacity="0.2"/>
+                <feComposite operator="in" in2="dropBlur" result="dropShadowComp"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+            </filter>
+            <filter id="drop-shadow-2" filterUnits="userSpaceOnUse">
+                <feOffset in="SourceAlpha"/>
+                <feGaussianBlur stdDeviation="3.162" result="dropBlur"/>
+                <feFlood flood-opacity="0.2"/>
+                <feComposite operator="in" in2="dropBlur" result="dropShadowComp"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+            </filter>
+        </defs>
+        <path d="M363.780,419.249 L363.631,419.116 C359.044,424.746 352.060,428.344 344.234,428.344 C330.419,428.344 319.219,417.137 319.219,403.312 C319.219,395.917 322.426,389.273 327.522,384.690 C365.960,340.702 389.264,283.152 389.264,220.143 C389.264,155.688 364.885,96.935 324.859,52.579 L325.229,52.241 C321.485,47.868 319.219,42.192 319.219,35.984 C319.219,22.169 330.419,10.969 344.234,10.969 C353.458,10.969 361.510,15.964 365.847,23.394 C411.596,76.091 439.301,144.876 439.301,220.143 C439.301,296.538 410.759,366.254 363.780,419.249 Z"
+              class="cls-1"/>
+        <text transform="translate(385 439) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">0</tspan>
+        </text>
+        <text transform="translate(433 370) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">1</tspan>
+        </text>
+        <text transform="translate(456 300) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">2</tspan>
+        </text>
+        <text transform="translate(465 224) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">3</tspan>
+        </text>
+        <text transform="translate(456 148) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">4</tspan>
+        </text>
+        <text transform="translate(433 68) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">5</tspan>
+        </text>
+        <text transform="translate(385 5) scale(1.8 1.8)" class="cls-2 rText">
+            <tspan class="cls-3">6</tspan>
+        </text>
+        <circle cx="150" cy="223" r="1" class="cls-4"/>
+        <path d="M341.113,215.886 L298.949,242.476 C289.685,313.750 230.168,370.069 155.948,372.965 C73.105,376.197 3.328,311.651 0.097,228.797 C-3.135,145.943 61.403,76.157 144.246,72.925 C218.769,70.017 282.708,121.962 297.153,192.739 L341.113,215.886 Z"
+              class="cls-5 rotateRectangle" transform="rotate(45, 150 223)"/>
+        <rect x="386.25" y="208.125" width="56.063" height="8" class="cls-6 rotateRectangle"
+              transform="rotate(45, 150 223)"/>
+        </rect>
+        <text transform="translate(143 233) scale(1.8 1.8)" class="cls-7 titleText">
+            <tspan class="cls-8 textDynamic">0</tspan>
+        </text>
+        <text transform="translate(101 297) scale(1.8 1.8)" class="cls-9 titleSubtext">
+            <tspan class="cls-10">小时</tspan>
+        </text>
+    </svg>
+
+</div>
+
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入数字"/>
+    <button id="change">变</button>
+</div>
+<script src="../../js/d3.js"></script>
+
+<script>
+    /*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    *  @param max 最大值
+    *  @param min 最小值
+    */
+    function redraw(paramsObj) {
+        var path = paramsObj.id;
+        var value = paramsObj.value;
+        var max = paramsObj.max || 6;
+        var min = paramsObj.min || 0;
+
+        var svg = d3.select(path).select("svg");
+        var currentValue = svg.attr("data-value") || 0;
+        svg.attr('data-value', value);
+        //判断超出量程的问题
+        if (value >= max) value = max;
+        else if (value <= min) value = min;
+        value = value / max * 100;
+        currentValue = currentValue / max * 100;
+        var oldValue2 = currentValue;
+
+        var currentPoint = (valueToDegreesPoint(currentValue || 0));
+
+        //指针旋转
+        function pointerRotate() {
+            var pointer = svg.selectAll(".rotateRectangle");
+            pointer.transition()
+                .duration(1000)
+                .ease(d3.easeBounce)
+                .attrTween("transform", function () {
+                    var targetRotation = (valueToDegreesPoint(value));
+                    //现在的角度
+                    var currentRotation = currentPoint || targetRotation;
+                    // currentPoint = targetRotation;
+                    if (currentPoint === 0) {
+                        currentRotation = 0
+                    }
+                    return function (step) {
+                        var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                        var textValue = (oldValue2 || 0) - ((oldValue2 || 0) - value) * step;
+                        textValue = Math.round(textValue * max) / 100;  //处理文本小数
+                        svg.select(".textDynamic")         //添加文本
+                            .text(textValue); //文字内容
+                        return " rotate(" + rotation + ", " + 150 + ", " + 223 + ")";   //定义旋转
+                    }
+                })
+        }
+
+        pointerRotate();
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 90;
+    }
+
+    function valueToDegreesPoint(value) {
+        return 42 - value / 100 * 84;
+    }
+</script>
+<script>
+    redraw({id: "#customerAverageOutageTime", value: 5});
+    change.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        redraw({id: "#customerAverageOutageTime", value: input});
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘2</title>
+    <style>
+        /*测试用样式*/
+        body {
+            background: #140f51;
+        }
+
+        #test {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<!--必须引用部分，id自定义,div需要提供对应自适应(rem)样式-->
+<div id="test">
+    <svg preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 400 270">
+        <defs>
+            <style>
+                #test .cls-7 {
+                    fill: #fff;
+                }
+
+                #test .cls-7 {
+                    font-size: 35.6px;
+                    text-anchor: middle; /* 文本水平居中 */
+                    dominant-baseline: auto; /* 文本垂直居中 */
+                }
+
+                #test .cls-8 {
+                    font-size: 22.3px;
+                }
+            </style>
+        </defs>
+        <g class="arcInner"></g>
+        <g class="pointerRect" transform="translate(-5 -25)">
+            <g transform="rotate(180, 199, 200)">
+                <path d="M230.996,200.282 C230.996,200.282 207.282,215.837 198.377,215.633 C189.470,215.429 182.413,208.061 182.612,199.176 C182.814,190.290 190.198,183.252 199.104,183.456 C208.011,183.660 230.996,200.282 230.996,200.282 Z"
+                      class="pointer" transform="rotate(150, 199, 200)"/>
+            </g>
+        </g>
+        <g>
+            <text x="195" y="130">
+                <tspan class="cls-7">
+                    <tspan class="textDynamic">0</tspan>
+                    <tspan class="cls-8">%</tspan>
+                </tspan>
+            </text>
+        </g>
+    </svg>
+</div>
+
+<!--依赖d3.js-->
+<script src="../../js/d3.js"></script>
+
+<script>
+    /*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    *  @param targetValue, 目标值，可选
+    */
+    function redraw(paramsObj) {
+        var path = paramsObj.id;
+        var value = paramsObj.value;
+
+        var svg = d3.select(path).select("svg");
+        var currentValue = svg.attr("data-value") || 0;
+        svg.attr('data-value', value);
+        var oldValue2 = currentValue;
+        //重置圆弧
+        svg.selectAll('g.arc').remove();
+
+        //判断超出量程的问题
+        if (value >= 100) value = 100;
+        else if (value <= 0) value = 0;
+
+        var currentPoint = (valueToDegrees(currentValue || 0));
+
+        var arcInner = d3.arc()
+            .outerRadius(112)
+            .innerRadius(146);
+
+        var arcOuter = d3.arc()
+            .outerRadius(120)
+            .innerRadius(136)
+            .startAngle(valueToRadians(0))
+            .endAngle(valueToRadians(100));
+
+        var pie = d3.pie();
+        var number = [100];
+
+        //固定圆弧
+        function innerArc() {
+            var arcInners = svg.select('g.arcInner');
+            arcInners.append("svg:path")
+                .attr("class", "arcDynamic")
+                .attr('fill', '#ccc')
+                .attr("transform", function () {//移动
+                        return "translate(" + 194 + ", " + 175 + ") rotate(270)"
+                    }
+                )
+                .transition()                   //设置动画
+                .duration(1000)                 //持续时间.
+                .ease(d3.easeBounce)
+                // .attr('fill', changeColor)
+                .attr('d', arcOuter)
+        }
+
+        //动态圆弧
+        function outerArc() {
+            var arcs = svg.selectAll('g.arc')
+                .data(pie(number))
+                .enter()
+                .append('g')
+                .attr('class', "arc");
+            arcs.append("svg:path")
+                .attr("class", "arcDynamic")
+                // .attr('fill', changeColor)
+                .attr("transform", function () {//移动
+                        return "translate(" + 194 + ", " + 175 + ") rotate(270)"
+                    }
+                )
+                .transition()                   //设置动画
+                .duration(1000)                 //持续时间.
+                .ease(d3.easeBounce)
+                .attrTween('d', tweenPieInner)
+        }
+
+        //缓动动画函数
+        function tweenPieInner(b) {
+            b.startAngle = valueToRadians(0);
+            b.endAngle = valueToRadians(value);
+            var i = d3.interpolate(
+                {startAngle: valueToRadians(0), endAngle: valueToRadians(currentValue || 0)},
+                b
+            );
+            currentValue = value;
+            //下面的函数就是过渡函数，他是执行多次最终达到想要的状态。
+            return function (t) {
+                return arcInner(i(t));
+            };
+        }
+
+        //指针旋转
+        function pointerRotate() {
+            var pointer = svg.select(".pointer");
+            pointer.transition()
+                .duration(1000)
+                .ease(d3.easeBounce)
+                .attrTween("transform", function () {
+                    var targetRotation = (valueToDegrees(value));
+                    //现在的角度
+                    var currentRotation = currentPoint || targetRotation;
+                    // currentPoint = targetRotation;
+                    if (currentPoint === 0) {
+                        currentRotation = 0
+                    }
+                    return function (step) {
+                        var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                        var textValue = (oldValue2 || 0) - ((oldValue2 || 0) - value) * step;
+                        textValue = Math.round(textValue * 100) / 100;  //处理文本小数
+                        svg.select(".textDynamic")         //添加文本
+                            .text(textValue); //文字内容
+                        return " rotate(" + rotation + ", " + 199 + ", " + 200 + ")";   //定义旋转
+                    }
+                })
+        }
+
+        innerArc();
+        outerArc();
+        pointerRotate();
+    }
+
+    function valueToRadians(value) {
+        return valueToDegrees(value) * Math.PI / 180;
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 180;
+    }
+</script>
+<!--下面为测试js-->
+<script>
+    redraw({id: "#test", value: 50});
+</script>
+</body>
+</html>

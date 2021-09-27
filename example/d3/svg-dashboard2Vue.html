@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘2</title>
+    <link href="public/bower/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+    <style>
+        /*测试用样式*/
+        body {
+            background: #140f51;
+        }
+
+        #dashboard {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #dashboard .outerText {
+            font-size: 17.8248px;
+        }
+
+        #dashboard .outerText,
+        #dashboard .cls-7 {
+            fill: #fff;
+            font-family: "Arial";
+        }
+
+        #dashboard .cls-7 {
+            font-size: 35.6495px;
+            text-anchor: middle; /* 文本水平居中 */
+            dominant-baseline: auto; /* 文本垂直居中 */
+        }
+
+        #dashboard .cls-8 {
+            font-size: 22.281px;
+        }
+
+        #dashboard .cls-font1 {
+            font-size: 10px;
+        }
+
+        #dashboard .cls-1 {
+            fill: #ccc;
+        }
+
+        #dashboard .arcDynamic,
+        #dashboard .pointer {
+            fill: #71d1d1;
+        }
+
+        #dashboard .target {
+            fill: #31B836;
+        }
+    </style>
+    
+</head>
+<body>
+
+<!--必须引用部分，id自定义,div需要提供对应自适应(rem)样式-->
+<div id="dashboard">
+    <svg preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 400 270" data-value="${{value}}">
+        <g class="arcInner">
+            <path d="M311.967,243.783 L298.006,235.733 C308.140,218.068 313.965,197.620 313.965,175.802 C313.965,109.106 259.827,55.038 193.045,55.038 C126.262,55.038 72.126,109.106 72.126,175.802 C72.126,197.228 77.739,217.335 87.536,234.780 L73.575,242.830 C62.407,223.015 56.004,200.161 56.004,175.802 C56.004,100.214 117.360,38.937 193.045,38.937 C268.731,38.937 330.085,100.214 330.085,175.802 C330.085,200.554 323.473,223.749 311.967,243.783 Z"
+                  class="cls-1"/>
+        </g>
+        <g class="pointerRect" transform="translate(-5 -25)">
+            <g transform="rotate(150, 199, 200)">
+                <path d="M230.996,200.282 C230.996,200.282 207.282,215.837 198.377,215.633 C189.470,215.429 182.413,208.061 182.612,199.176 C182.814,190.290 190.198,183.252 199.104,183.456 C208.011,183.660 230.996,200.282 230.996,200.282 Z"
+                      class="pointer" transform="rotate(150, 199, 200)"/>
+            </g>
+        </g>
+        <g class="outerText">
+            <text transform="translate(35 258) scale(1.34 1.34)">
+                <tspan>0</tspan>
+            </text>
+            <text transform="translate(-1 107) scale(1.34 1.34)">
+                <tspan>25%</tspan>
+            </text>
+            <text transform="translate(168 17) scale(1.34 1.34)">
+                <tspan>50%</tspan>
+            </text>
+            <text transform="translate(332 107) scale(1.34 1.34)">
+                <tspan>75%</tspan>
+            </text>
+            <text transform="translate(332 258) scale(1.34 1.34)">
+                <tspan>100%</tspan>
+            </text>
+        </g>
+        <g>
+            <text>
+                <tspan x="265" y="210" fill="#fff" class="cls-font1 targetName"></tspan>
+                <tspan x="265" y="225" fill="#31B836" class="cls-font1 targetValue"></tspan>
+            </text>
+            <path class="target"/>
+        </g>
+        <g>
+            <text x="195" y="130">
+                <tspan class="cls-7">
+                    <tspan class="textDynamic">0</tspan>
+                    <tspan class="cls-8">%</tspan>
+                </tspan>
+            </text>
+        </g>
+    </svg>
+
+
+<!--测试用-->
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数" v-model="value" v-on:change="updateData()" />
+    <div>
+        <input type="range" id="range1" name="points" min="0" max="100"  v-model="value" v-on:change="updateData()" />
+    </div>
+    <button id="change">变</button>
+</div>
+
+</div>
+<script src="../../js/d3.js"></script>
+<script src="../../plugins/vue/vue.min.js"></script>
+
+<script>
+    //使用构造函数初始化Vue实例
+    var app = new Vue({
+      // CSS selector of the root DOM element
+      el: '#dashboard',
+      //使用对象
+      data : {
+        show:true,
+        value:70,
+        currentValue:0,
+        targetValue:100,
+      },
+      methods:{
+        updateData:function(e){
+            redraw( {path:this.$options.el, value:this.value , currentValue:this.currentValue} );
+            this.currentValue = this.value;
+        }
+      },
+      mounted: function(){
+        console.log("created:value=",this.value);
+        // redraw( {path:this.$options.el, value:this.value , currentValue:this.currentValue} );
+        this.updateData();
+      }
+    });
+
+
+    /**
+    *   重新绘制图表
+    * @param paramObj.path 选择器
+    * @param paramObj.value 更新值
+    * @param paramObj.value 当前值
+    * @retrun 无
+    */
+    function redraw(paramObj) {
+        var path = paramObj.path || "";
+        var value = paramObj.value || 0;
+        var targetValue = paramObj.targetValue;
+
+        var svg = d3.select(path).select("svg");
+        // var currentValue = svg.attr("data-value");
+        var currentValue = paramObj.currentValue||0;
+        //重置圆弧
+        svg.selectAll('g.arc').remove();
+
+        //判断超出量程的问题
+        if (value >= 100) value = 100;
+        else if (value <= 0) value = 0;
+
+        var currentPoint = (valueToDegreesPoint(currentValue || 0));
+
+        var arcInner = d3.arc()
+            .outerRadius(146)
+            .innerRadius(112);
+        var pie = d3.pie();
+        var number = [100];
+
+
+        //增加目标值
+        function addTarget() {
+            var target = svg.select(".target");
+            var tValue = svg.select(".targetValue");
+            var tName = svg.select(".targetName");
+            var targetPath, tx, ty;
+            if (targetValue >= 100) targetValue = 100;
+            else if (targetValue <= 0) targetValue = 0;
+            var trad = valueToRadians(targetValue);
+            ty = Math.round((175 - Math.sin(trad) * 110) * 100) / 100;
+            tx = Math.round((194 - Math.cos(trad) * 110) * 100) / 100;
+            if (tx > 195) {
+                targetPath = ['M', tx, ty, 'L', tx - 5, ty + 4, 'L', tx - 5, ty - 4, 'z'];
+                target.attr('d', targetPath.join(' '));
+                tValue.attr('y', ty + 4)
+                    .attr('x', tx - 35)
+                    .text(targetValue + "%");
+                tName.attr('y', ty - 10)
+                    .attr('x', tx - 35)
+                    .text("目标");
+            } else {
+                targetPath = ['M', tx, ty, 'L', tx + 5, ty + 4, 'L', tx + 5, ty - 4, 'z'];
+                target.attr('d', targetPath.join(' '));
+                tValue.attr('y', ty + 4)
+                    .attr('x', tx + 8)
+                    .text(targetValue + "%");
+                tName.attr('y', ty - 10)
+                    .attr('x', tx + 8)
+                    .text("目标");
+            }
+        }
+
+        //动态圆弧
+        function outerArc() {
+            var arcs = svg.selectAll('g.arc')
+                .data(pie(number))
+                .enter()
+                .append('g')
+                .attr('class', "arc");
+            arcs.append("svg:path")
+                .attr("class", "arcDynamic")
+                .attr("transform", function () {//移动
+                        return "translate(" + 194 + ", " + 175 + ") rotate(270)"
+                    }
+                )
+                .transition()                   //设置动画
+                .ease(d3.easeBounce)
+                .duration(1000)                 //持续时间.
+                .attrTween('d', tweenPieInner)
+        }
+
+        //缓动动画函数
+        function tweenPieInner(b) {
+            b.startAngle = valueToRadians(0);
+            b.endAngle = valueToRadians(value);
+            var i = d3.interpolate(
+                { startAngle: valueToRadians(0), 
+                  endAngle: valueToRadians(currentValue || 0)
+                },
+                b
+            );
+            console.log(value,currentValue);
+            currentValue = value;
+            //下面的函数就是过渡函数，他是执行多次最终达到想要的状态。
+            return function (t) {
+                var it = i(t);
+                return arcInner(it);
+            };
+        }
+
+        //指针旋转
+        function pointerRotate() {
+            var pointer = svg.select(".pointer");
+            pointer.transition()
+                .duration(1000)
+                .ease(d3.easeBounce)
+                .attrTween("transform", function () {
+                    var targetRotation = (valueToDegreesPoint(value));
+                    //现在的角度
+                    var currentRotation = currentPoint || targetRotation;
+                    // currentPoint = targetRotation;
+                    if (currentPoint === 0) {
+                        currentRotation = 0
+                    }
+                    return function (step) {
+                        var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                        // var textValue = (oldValue2 || 0) - ((oldValue2 || 0) - value) * step;
+                        var textValue = value * step; 
+                        textValue = Math.round(textValue * 100) / 100;  //处理文本小数
+                        svg.select(".textDynamic")         //添加文本
+                            .text(textValue); //文字内容
+                        return " rotate(" + rotation + ", " + 200 + ", " + 200 + ")";   //定义旋转
+                    }
+                })
+        }
+
+        
+
+        if (targetValue) {
+            addTarget();
+        }
+/*
+        if (color) {
+            changeColor();
+        }
+*/
+        pointerRotate();
+        outerArc();
+        changeColor();
+
+        //设置
+        // svg.attr("data-value",value);
+
+        
+        //设置颜色
+        function changeColor() {
+            // console.log(svg.selectAll('.arcDynamic'))
+        }
+    }
+
+    function valueToRadians(value) {
+        return valueToDegrees(value) * Math.PI / 180;
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 240 - 30;
+    }
+
+    function valueToDegreesPoint(value) {
+        return value / 100 * 240;
+    }
+</script>
+
+</body>
+</html>

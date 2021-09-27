@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>圆弧柱状图</title>
+    <style>
+        body {
+            background: #0a6aa1;
+        }
+        #test{
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+         preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 300 228">
+        <defs>
+            <style>
+                .triangle {
+                    fill-opacity: 1;
+                    fill-rule: evenodd;
+                }
+
+                .arc-out {
+                    fill: none;
+                    stroke: red;
+                    stroke-width: 10;
+                    filter: url(#color-overlay-1);
+                }
+
+                .arc-in {
+                    fill: none;
+                    stroke: red;
+                    stroke-width: 10;
+                    filter: url("#color-overlay-2");
+                }
+
+                .text {
+                    font-size: 1.5rem;
+                    font-family: "Microsoft YaHei";
+                    text-anchor: end;
+                }
+
+                .green {
+                    fill: #9bca63;
+                }
+
+                .lightblue {
+                    fill: #6bb8ff;
+                }
+            </style>
+            <filter id="color-overlay-1" filterUnits="userSpaceOnUse">
+                <feFlood flood-color="#0074e0"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="SourceGraphic" result="solidFill"/>
+            </filter>
+            <filter id="color-overlay-2" filterUnits="userSpaceOnUse">
+                <feFlood flood-color="#9bca63"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="SourceGraphic" result="solidFill"/>
+            </filter>
+
+            <g id="triangleGroup">
+                <path d="M10,7 L15,2 L5,2 L10,7 Z" class="triangle"/>
+            </g>
+
+        </defs>
+    </svg>
+</div>
+
+<script src="../../js/d3.js"></script>
+<script>
+    function draw(id, inner, outer, unit) {
+        let progress = Math.round(inner / outer * 100) / 100,
+            innerRad = progress * Math.PI * 3 / 2,
+            number = [100],
+            svg = d3.select(id).select('svg'),
+            pie = d3.pie(),
+            arcInner = d3.arc()
+                .outerRadius(85)
+                .innerRadius(81),
+            arcOuter = d3.arc()
+                .outerRadius(100)
+                .innerRadius(95),
+            arcs = svg.selectAll('g.arc')
+                .data(pie(number))            //绑定数据
+                .enter().append('g')        //添加g
+                .attr('class', "arc");       //定义一个arc类
+
+        //内圈圆
+        function arcsInner() {
+                arcs.append("svg:path")
+                    .style("stroke", "#9bca63")
+                    .style("fill", "none")
+                    .style("stroke-width", "5")
+                    //            .attr("class", "arc-in")
+                    .attr("transform", function () {//移动
+                            return "translate(" + 132 + ", " + 114 + ")"
+                        }
+                    )
+                    .transition()                   //设置动画
+                    //            .ease('bounce')                 //动画效果
+                    .duration(2000)                 //持续时间.
+                    .delay(1500)
+                    .attrTween('d', tweenPieInner)
+                    //两个属性之间平滑的过渡。
+        }
+
+        //外圈圆
+        function arcsOuter() {
+                arcs.append("svg:path")
+                    .style("stroke", "#0075e0")
+                    .style("fill", "none")
+                    .style("stroke-width", "5")
+                    .attr("transform", function () {//移动
+                            return "translate(" + 132 + ", " + 114 + ")"
+                        }
+                    )
+                    //            .attr("class", "arc-out")
+                    .transition()                   //设置动画
+                    //                        .ease('linear')                 //动画效果
+                    .duration(2000)                 //持续时间
+                    .attrTween('d', tweenPieOuter)
+                    //两个属性之间平滑的过渡。
+        }
+
+        //内部过渡
+        function tweenPieInner(b) {
+            b.endAngle = innerRad;
+            var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
+            //下面的函数就是过渡函数，他是执行多次最终达到想要的状态。
+            return function (t) {
+                return arcInner(i(-t));
+            };
+        }
+
+        //外部过渡
+        function tweenPieOuter(b) {
+            //过渡
+            b.endAngle = Math.PI * 3 / 2;
+            var i = d3.interpolate({startAngle: 0, endAngle: 0}, b);
+            return function (t) {
+                return arcOuter(i(-t));
+            };
+        }
+
+        //text文本外部
+        function drawTextOuter(value) {
+            let x = 98 * Math.cos(Math.PI * 2) + 122;
+            y = 104 - 98 * Math.sin(Math.PI * 2);
+            let g = svg.append('g')
+                    .attr("style", "visibility: hidden;"),
+                text = g.append('text')
+                    .attr("class", "text")
+                    .attr("x", x + 74)
+                    .attr("y", y-3);
+
+            text.append('tspan')
+                .attr("class", "lightblue")
+                .html(value + unit);
+            g.append("use")
+                .attr("xlink:href", "#triangleGroup")
+                .attr("x", x)
+                .attr("y", y-2)
+                .attr("fill", "#6bb8ff")
+                .attr("filter", "url(#color-overlay-1)");
+            g.transition()
+                .duration(1000)
+                .delay(2000)
+                .attr("style", "visibility: visible;");
+        }
+
+        //text文本内部
+        function drawTextInner(value) {
+            let x = 83 * Math.cos(innerRad + Math.PI / 2) + 122,
+                y = 104 - 83 * Math.sin(innerRad + Math.PI / 2);
+            let g = svg.append('g')
+                    .attr("style", "visibility: hidden;"),
+                text = g.append('text')
+                    .attr("class", "text")
+                    .attr("x", x + 18)
+                    .attr("y", y - 3);
+
+            text.append('tspan')
+                .attr("class", "green")
+                .html(value + unit);
+            g.append("use")
+                .attr("xlink:href", "#triangleGroup")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("fill", "#9bca63")
+                .attr("filter", "url(#color-overlay-2)")
+            g.transition()
+                .duration(1000)
+                .delay(3500)
+                .attr("style", "visibility: visible;");
+        }
+
+        drawTextInner(inner);
+        drawTextOuter(outer);
+        arcsInner();
+        arcsOuter();
+    }
+
+    draw("#test", "5.54", "5.30", "次");
+</script>
+</body>
+</html>

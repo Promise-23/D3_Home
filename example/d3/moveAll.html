@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>moveAll</title>
+  <script src="../../js/d3.js"></script>
+  <!--<script src="Donut3D.js"></script>-->
+  <script src="../../js/jquery.js"></script>
+  <style>
+    .boxs{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .box{
+      height: 300px;
+      width: 150px;
+    }
+    .left{
+      background: blue;
+    }
+    .right{
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="boxs">
+    <div class="left box"></div>
+    <div class="right box"></div>
+  </div>
+  <button id="open-btn">打开</button>
+  <button id="merge-btn">合并</button>
+  <script>
+    document.querySelector('#open-btn').addEventListener('click', () => {
+      d3.select('.left').style('margin-right', '0px').transition().duration(1000).style('margin-right', '100px')
+      d3.select('.right').style('margin-left', '0px').transition().duration(1000).style('margin-left', '100px')
+    })
+
+    document.querySelector('#merge-btn').addEventListener('click', () => {
+      d3.select('.left').style('margin-right', '100px').transition().duration(1000).style('margin-right', '0px')
+      d3.select('.right').style('margin-left', '100px').transition().duration(1000).style('margin-left', '0px')
+    })
+  </script>
+</body>
+</html>

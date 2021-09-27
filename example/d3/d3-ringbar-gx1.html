@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  width: 960px;
+  height: 500px;
+  position: relative;
+}
+
+</style>
+<body>
+<!--
+	<g id="basic" class="st0">
+		<path id="innerSlice" class="st10a"  style="overflow:visible;fill:#3DAA69;" />
+		<polygon id="leftSlice" class="st9"/>
+		<polygon id="rightSlice" class="st9"/>
+		<path id="outerSlice" class="st10" d=""/>
+		<path id="topSlice" class="st11" />
+	</g>
+-->
+
+<div id="salesDonut" style="width:400px;height:600px"></div>
+
+<script src="../../js/d3.js"></script>
+<!-- <script src="./d3.js"></script> -->
+<script src="./d3-ringbar-gx1.js"></script>
+<script>
+	var salesData=[
+	{label:"Basic", color:"#3366CC", value:90, highValue:60},
+	{label:"Plus", color:"#DC3912",  value:90, highValue:60},
+	{label:"Lite", color:"#FF9900",  value:90, highValue:90},
+	//{label:"Elite", color:"#109618", value:90, highValue:50},
+	//{label:"Delux", color:"#990099", value:90, highValue:10},
+	//{label:"Jack", color:"#998899",  value:90, highValue:30},
+	//{label:"aaa", color:"#990EE9", value:90, highValue:50},
+	//{label:"bbb", color:"#998DD9",  value:90, highValue:50}
+];
+
+
+	//var cx = 960/2;
+	//var cy = 332//560/2;
+	var cx = 200;	//圆心的X位置
+	var cy = 300;	//圆心的Y位置
+	var rx = 120;	//圆角的X方位的半径
+	var ry = 80;	//圆角的Y方位的半径
+	var tp = 0.5;		//thin percentage  壁厚百分比
+	//var startAngle = -90;
+	//var endAngle = 30;
+	var offsetAngle = Math.PI/2;
+
+	var id = "salesDonut";
+	RingBar.draw(id,cx,cy,rx,ry,tp,offsetAngle);
+
+</script>
+</body>

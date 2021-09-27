@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘2</title>
+    <style>
+        /*测试用样式*/
+        body {
+            background: #140f51;
+        }
+
+        #test {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+<!--必须引用部分，id自定义,div需要提供对应自适应(rem)样式-->
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         preserveAspectRatio="xMidYMid" width="100%" height="100%" viewBox="0 0 400 270">
+        <defs>
+            <style>
+                .cls-1 {
+                    fill: #ccc;
+                }
+
+                .cls-1, .arcDynamic, .pointer {
+                    fill-rule: evenodd;
+                }
+
+                .arcDynamic {
+                    fill: #66abff;
+                }
+
+                .arcDynamic, .pointer {
+                    filter: url(#filter-chain-1);
+                }
+
+                .pointer {
+                    fill: #0d0f04;
+                }
+
+                .cls-4, .cls-5 {
+                    font-size: 17.8248px;
+                }
+
+                .cls-5, .cls-7 {
+                    fill: #fff;
+                    font-family: "Arial";
+                }
+
+                .cls-6, .cls-7 {
+                    font-size: 35.6495px;
+                    text-anchor: middle; /* 文本水平居中 */
+                    dominant-baseline: auto; /* 文本垂直居中 */
+                }
+
+                .cls-7 {
+                    text-justify: auto;
+                }
+
+                .cls-8 {
+                    font-size: 22.281px;
+                }
+
+                #arcDynamic {
+                    fill: #71d1d1;
+                }
+
+                .cls-font1 {
+                    font-size: 10px;
+                }
+
+                .target {
+                    fill: #31B836;
+                }
+            </style>
+
+            <filter id="filter-chain-1" filterUnits="userSpaceOnUse">
+                <feOffset dy="1" in="SourceAlpha"/>
+                <feGaussianBlur stdDeviation="1.414" result="dropBlur"/>
+                <feFlood flood-opacity="0.5"/>
+                <feComposite operator="in" in2="dropBlur" result="dropShadowComp"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+                <feFlood flood-color="#71d1d1"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="shadowed" result="solidFill"/>
+            </filter>
+        </defs>
+        <path d="M311.967,243.783 L298.006,235.733 C308.140,218.068 313.965,197.620 313.965,175.802 C313.965,109.106 259.827,55.038 193.045,55.038 C126.262,55.038 72.126,109.106 72.126,175.802 C72.126,197.228 77.739,217.335 87.536,234.780 L73.575,242.830 C62.407,223.015 56.004,200.161 56.004,175.802 C56.004,100.214 117.360,38.937 193.045,38.937 C268.731,38.937 330.085,100.214 330.085,175.802 C330.085,200.554 323.473,223.749 311.967,243.783 Z"
+              class="cls-1"/>
+        <g class="pointerRect" transform="translate(-10 -15)">
+            <path d="M230.996,200.282 C230.996,200.282 207.282,215.837 198.377,215.633 C189.470,215.429 182.413,208.061 182.612,199.176 C182.814,190.290 190.198,183.252 199.104,183.456 C208.011,183.660 230.996,200.282 230.996,200.282 Z"
+                  class="pointer"/>
+        </g>
+        <text transform="translate(35 258) scale(1.34 1.34)" class="cls-4">
+            <tspan class="cls-5">0</tspan>
+        </text>
+        <text transform="translate(-1 107) scale(1.34 1.34)" class="cls-4">
+            <tspan class="cls-5">25%</tspan>
+        </text>
+        <text transform="translate(168 17) scale(1.34 1.34)" class="cls-4">
+            <tspan class="cls-5">50%</tspan>
+        </text>
+        <text transform="translate(332 107) scale(1.34 1.34)" class="cls-4">
+            <tspan class="cls-5">75%</tspan>
+        </text>
+        <text transform="translate(332 258) scale(1.34 1.34)" class="cls-4">
+            <tspan class="cls-5">100%</tspan>
+        </text>
+        <g>
+            <text>
+                <tspan x="265" y="210" fill="#fff" class="cls-font1 targetName">目标</tspan>
+                <tspan x="265" y="225" fill="#31B836" class="cls-font1 targetValue">97%</tspan>
+            </text>
+            <path class="target"/>
+        </g>
+        <text x="195" y="130" class="cls-6">
+            <tspan class="cls-6">
+                <tspan class="cls-7">
+                    <tspan class="textDynamic">93.81</tspan>
+                    <tspan class="cls-8">%</tspan>
+                </tspan>
+            </tspan>
+        </text>
+        <g>
+            <path id="arcDynamic" transform="translate(194, 175) rotate(270)"></path>
+        </g>
+    </svg>
+</div>
+
+<!--测试用-->
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range1"/>
+    </div>
+    <button id="change">变</button>
+</div>
+
+<!--依赖d3.js-->
+<script src="../../js/d3.js"></script>
+
+<!--三个方法可以直接拿到对应js模块，如计量模块js-->
+<script>
+    function redraw(path, value, targetValue) {
+        //判断超出量程的问题
+        if (value >= 100) value = 100;
+        else if (value <= 0) value = 0;
+        let currentPoint = (valueToDegrees(value) + 180),
+            svg = d3.select(path).select("svg");
+        let pointer = svg.select(".pointer");
+
+        //增加目标值
+        if (targetValue != undefined){
+            let target = svg.select(".target");
+            let tValue = svg.select(".targetValue");
+            let tName = svg.select(".targetName");
+            let targetPath, tx, ty;
+            if (targetValue >= 100) targetValue = 100;
+            else if (targetValue <= 0) targetValue = 0;
+            let trad = valueToRadians(targetValue);
+            ty = Math.round((175-Math.sin(trad) * 110) * 100) / 100;
+            tx = Math.round((194-Math.cos(trad) * 110) * 100) / 100;
+            if (tx > 195){
+                targetPath = ['M', tx, ty, 'L', tx - 5, ty + 4, 'L', tx - 5, ty - 4, 'z'];
+                target.attr('d', targetPath.join(' '));
+                tValue.attr('y', ty+4)
+                    .attr('x', tx-35)
+                    .text(targetValue + "%");
+                tName.attr('y', ty-10)
+                    .attr('x', tx-35)
+                    .text("目标");
+            } else {
+                targetPath = ['M', tx, ty, 'L', tx + 5, ty + 4, 'L', tx + 5, ty - 4, 'z'];
+                target.attr('d', targetPath.join(' '));
+                tValue.attr('y', ty+4)
+                    .attr('x', tx+8)
+                    .text(targetValue + "%");
+                tName.attr('y', ty-10)
+                    .attr('x', tx+8)
+                    .text("目标");
+            }
+        }
+
+        svg.select("#arcDynamic")
+            .attr("d", d3.arc()  //添加圆弧
+                .startAngle(valueToRadians(0))
+                //开始弧度
+                .endAngle(valueToRadians(value))
+                //结束弧度
+                .innerRadius(112)  //内圈半径
+                .outerRadius(146))  //外圈半径
+            .attr("transform", function () {//移动+旋转
+                    return "translate(" + 194 + ", " + 175 + ") rotate(270)"
+                }
+            );
+        pointer.transition()
+            .attrTween("transform", function () {
+                svg.select(".textDynamic")         //添加文本
+                    .text(Math.round(value * 100) / 100); //文字内容
+                let targetRotation = (valueToDegrees(value) + 180);
+                //现在的角度
+                let currentRotation = currentPoint || targetRotation;
+                currentPoint = targetRotation;
+                return function (step) {
+                    let rotation = currentRotation + (targetRotation - currentRotation) * step;
+                    return " rotate(" + rotation + ", " + 200 + ", " + 200 + ")";   //定义旋转
+                }
+            })
+    }
+
+    function valueToRadians(value) {
+        return valueToDegrees(value) * Math.PI / 180;
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 240 - 30;
+    }
+
+</script>
+<!--下面为测试js-->
+<script>
+    redraw("#test", 10, 10);
+    var btn = document.getElementById('change');
+    btn.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        range1.value = input;
+        redraw("#test", input, 90)
+    }, false);
+    range1.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range1.value;
+
+        redraw("#test", input1.value, 100)
+    })
+</script>
+</body>
+</html>

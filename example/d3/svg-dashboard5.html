@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>仪表盘</title>
+    <style>
+        body {
+            background: #140f51;
+        }
+
+        #test {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #myForm {
+            position: absolute;
+            left: 20%;
+            top: 60%;
+        }
+
+        #myForm div {
+            margin: 20px 0;
+        }
+
+        .rotateRectangle {
+            fill-rule: evenodd;
+        }
+
+        .cls-1 {
+            fill: url(#linearColor);
+        }
+    </style>
+</head>
+<body>
+
+<div id="test">
+    <svg width="100%" height="100%" viewBox="0 0 132 152">
+        <path class="cls-1"
+              d="M59.164,151.35c-3.12-1.161-5.606-3.117-6.237-6.355v-4.682c0.778-2.871,3.166-4.308,5.933-5.761,31.245-2.261,55.878-27.595,55.878-58.538,0-30.571-24.042-55.675-54.751-58.455-2.818-1.18-5.058-2.727-5.962-5.092C50.888,4.256,57.494,1.445,59.831.727,100.157,3.479,132,36.122,132,76.014,132,116.126,99.807,148.915,59.164,151.35Z"/>
+        <path class="rotateRectangle"
+              d="M27,52A26,26,0,1,1,1,78,26,26,0,0,1,27,52Zm0,7A19,19,0,1,1,8,78,19,19,0,0,1,27,59Zm0,6A13,13,0,1,1,14,78,13,13,0,0,1,27,65Z"/>
+        <path class="rotateRectangle"
+              d="M29,52a150.979,150.979,0,0,0,49,1s-5.786,3.127-33,44c0,0,5.181-15.323,5-20s-1.694-9.312-4-12-2.343-3.8-6-6a74.533,74.533,0,0,0-8-4C31.749,54.855,29,52,29,52Z"/>
+    </svg>
+</div>
+
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入数字"/>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range1"/>
+    </div>
+    <button id="change">变</button>
+</div>
+<script src="../../js/d3.js"></script>
+
+<script>
+    /*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    */
+    function redraw(paramsObj) {
+        var path = paramsObj.id;
+        var value = paramsObj.value;
+
+        var svg = d3.select(path).select("svg");
+        var currentValue = svg.attr("data-value") || 0;
+        svg.attr('data-value', value);
+        var oldValue2 = currentValue;
+
+        var defs = svg.append("defs");
+        var linearGradient = defs.append("linearGradient")
+            .attr("id", "linearColor")
+            // .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", "50%")
+            .attr("x2", "50%")
+            .attr("y2", "100%");
+
+        var colorData = ["#eebc23", "#c9e91a", "#30f295", "#3083f2"];
+        var offsetArr = ["0", "0.265", "0.7", "1"];
+
+        var stop = linearGradient
+            .selectAll('stop')
+            .data(colorData)
+            .enter()
+            .append("stop")
+            .attr("offset", function (d, i) {
+                return offsetArr[i]
+            })
+            .attr("stop-color", function (d, i) {
+                return d
+            });
+
+        var progress = value / 100;
+        var pointColor;
+        var compute;
+        if (progress < 0.265) {
+            compute = d3.interpolate(colorData[3], colorData[2]);
+        } else if (progress < 0.7) {
+            compute = d3.interpolate(colorData[2], colorData[1]);
+        } else {
+            compute = d3.interpolate(colorData[1], colorData[0]);
+        }
+        var linear = d3.scaleLinear();
+        pointColor = compute(linear(progress));
+
+        var currentPoint = (valueToDegreesPoint(currentValue || 0));
+
+        //指针旋转
+        function pointerRotate() {
+            var pointer = svg.selectAll(".rotateRectangle");
+            pointer
+                .transition()
+                .duration(1000)
+                .ease(d3.easeCubicInOut)
+                .attr('fill', pointColor)
+                .attrTween("transform", function () {
+                    var targetRotation = (valueToDegreesPoint(value));
+                    //现在的角度
+                    var currentRotation = currentPoint || targetRotation;
+                    if (currentPoint === 0) {
+                        currentRotation = 0
+                    }
+                    return function (step) {
+                        var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                        return " rotate(" + rotation + ", " + 27 + ", " + 78 + ")";   //定义旋转
+                    }
+                })
+        }
+
+        pointerRotate();
+    }
+
+    function valueToDegreesPoint(value) {
+        return 92 - value / 100 * 132;
+    }
+</script>
+<script>
+    redraw({id: "#test", value: 80});
+    change.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        redraw({id: "#test", value: input});
+    });
+    range1.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range1.value;
+        redraw({id: '#test', value: range1.value});
+    });
+</script>
+</body>
+</html>

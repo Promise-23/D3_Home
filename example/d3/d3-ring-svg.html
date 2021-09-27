@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>d3完成版05</title>
+    <style>
+        .big-ring {
+            fill: #fff;
+            stroke: #d3dae6;
+            stroke-width: 10;
+        }
+
+        .big-ring-lack {
+            fill: #fff;
+            stroke-width: 10;
+            stroke: #688cba;
+        }
+
+        .fan {
+            fill: #d3dae6;
+            fill-rule: evenodd;
+        }
+
+        .fan-black {
+            fill: #688cba;
+            fill-rule: evenodd;
+        }
+
+        .white-circle {
+            fill: #fff;
+            opacity: 0.2;
+            fill-rule: evenodd;
+        }
+
+        .pei {
+            stroke: #36394d;
+            stroke-width: 10px;
+            fill: #36394d;
+            stroke-linejoin: round;
+        }
+
+        .pei-small {
+            stroke: #688cba;
+            stroke-width: 6px;
+            fill: #36394d;
+            stroke-linejoin: round;
+        }
+
+        .lighting-dots {
+            fill: #6898d5;
+            filter: url(#outer-glow-1);
+        }
+
+        #center-text {
+            fill: #fff;
+            font-size: 40px;
+            text-anchor: middle; /* 文本水平居中 */
+            dominant-baseline: auto; /* 文本垂直居中 */
+        }
+
+        #myForm {
+            position: absolute;
+            left: 70%;
+            top: 20%;
+        }
+
+        #myForm div {
+            margin: 20px 0;
+        }
+
+        #svg {
+            transform: translate(30px, 30px);
+        }
+
+        #test {
+            width: 600px;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <svg>
+        <defs>
+            <filter id="outer-glow-1" filterUnits="userSpaceOnUse">
+                <feGaussianBlur stdDeviation="10" in="SourceAlpha"/>
+                <feComposite/>
+                <feComposite/>
+                <feComposite result="outerGlowBlur"/>
+                <feFlood flood-color="#5d9cec" flood-opacity="0.5"/>
+                <feComposite operator="in" in2="outerGlowBlur"/>
+                <feBlend in2="SourceGraphic" result="outerGlow"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+            </filter>
+            <clipPath id="clipPath">
+                <path id="layer"/>
+            </clipPath>
+        </defs>
+    </svg>
+</div>
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <div>
+        <input type="radio" name="flag" value="0" checked>顺
+        <input type="radio" name="flag" value="1">逆
+    </div>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range"/>
+    </div>
+    <button id="change">变</button>
+</div>
+<script src="../../js/d3.js"></script>
+<script>
+    function drawByD3(id) {
+        let svg = d3.select(id).select("svg");
+        let data = [];
+        for (let i = 0; i < 24; i++)
+            data.push(1);
+        let pie = d3.pie()
+            .padAngle(0.04);
+        let arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(250);
+
+        let arc1 = d3.arc()
+            .innerRadius(210)
+            .outerRadius(250);
+
+        svg.attr("width", "100%")
+            .attr("height", "100%")
+            .attr("preserveAspectRatio", "xMidYMid")
+            .attr("viewBox", "0 0 600 600")
+
+        let defs = svg.append("defs");
+        let filter = defs.append("filter")
+            .attr("id", "outer-glow-1")
+
+        filter.append("feGaussianBlur")
+            .attr("stdDeviation", "10")
+            .attr("in", "SourceAlpha")
+
+        defs.append("clipPath")
+            .attr("id", "clipPath")
+            .append("path")
+            .attr("id", "layer");
+
+        let g_outer = svg.append("g");
+        g_outer.append("circle")
+            .attr("cx", 280)
+            .attr("cy", 280)
+            .attr("r", 270)
+            .attr("class", "big-ring-lack")
+        let arcs = g_outer.selectAll('g')
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "fan-black")
+            .attr("transform", "translate(280, 280)")
+        arcs.append("path")
+            .attr("d", "")
+            .transition()
+            .duration(2000)
+
+            .attr("d", function (d) {
+                return arc(d);
+            })
+
+        let g_inner = svg.append("g")
+            .attr("clip-path", "url(#clipPath)");
+        g_inner.append("circle")
+            .attr("cx", 280)
+            .attr("cy", 280)
+            .attr("r", 270)
+            .attr("class", "big-ring")
+        let arcs1 = g_inner.selectAll('g')
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "fan")
+            .attr("transform", "translate(280, 280)")
+        arcs1.append("path")
+            .attr("d", function (d) {
+                return arc(d);
+            })
+
+        let g_opacity = svg.append("g");
+        let arcs2 = g_opacity.selectAll('g')
+            .data(pie(data))
+            .enter()
+            .append("g")
+            .attr("class", "white-circle")
+            .attr("transform", "translate(280, 280)")
+        arcs2.append("path")
+            .attr("d", function (d) {
+                return arc1(d);
+            })
+
+        let g_middle = svg.append("g")
+        g_middle.append("circle")
+            .attr("cx", 280)
+            .attr("cy", 280)
+            .attr("r", 143)
+            .attr("class", "pei")
+        g_middle.append("circle")
+            .attr("cx", 280)
+            .attr("cy", 280)
+            .attr("r", 143)
+            .attr("class", "pei-small")
+        g_middle.append("text")
+            .attr("x", "280")
+            .attr("y", "280")
+            .attr("id", "center-text")
+            .text("100%");
+        g_middle.append("circle")
+            .attr("class", "lighting-dots")
+    }
+
+    function draw(id, progress) {
+        let svg = d3.select(id).select("svg");
+        let path = svg.select('#layer');
+        let textMiddle = svg.select("#center-text");
+        let lightingDots = svg.select(".lighting-dots");
+        let r = 280;
+        path.attr('transform', 'translate(280, 280)');
+        var direction;
+        var x, y, cx, cy, lack, antiLack;
+        if (progress >= 100) {
+            progress = 100;
+            lack = [];
+            antiLack = ['M', 0, 0, 'v', -r, 'A', r, r, 0, 1, 0, r, 0, 'A', r, r, 0, 0, 0, 0, -r];
+            cx = 280;
+            cy = 10;
+        } else if (progress <= 0) {
+            progress = 0;
+            lack = ['M', 0, 0, 'v', -r, 'A', r, r, 0, 1, 0, r, 0, 'A', r, r, 0, 0, 0, 0, -r];
+            antiLack = [];
+            cx = 280;
+            cy = 10;
+        } else {
+            var degrees = progress * (360 / 100);
+            var rad = degrees * (Math.PI / 180);
+            x = parseInt(Math.sin(rad) * r);
+            y = parseInt(-Math.cos(rad) * r);
+            cx = (Math.sin(rad) * 270 + 280).toFixed(2);
+            cy = (-Math.cos(rad) * 270 + 280).toFixed(2);
+            var lenghty = Number(degrees > 180);
+            var aflag = Number(degrees <= 180);
+            antiLack = ['M', 0, 0, 'v', -r, 'A', r, r, 0, lenghty, 1, x, y, 'z'];
+            lack = ['M', 0, 0, 'v', -r, 'A', r, r, 0, aflag, 0, x, y, 'z'];
+        }
+        var descriptions = lack;
+        path.attr('d', descriptions.join(' '));
+        lightingDots.attr('cx', cx);
+        lightingDots.attr('cy', cy);
+        lightingDots.attr('r', 10);
+        textMiddle.text(Math.round(progress * 100) / 100 + "%");
+    }
+
+    drawByD3("#test");
+    draw("#test", 90);
+</script>
+<script>
+    var btn = document.getElementById('change');
+    btn.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        range.value = input;
+        draw("#test", input);
+    }, false);
+    range.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range.value;
+        draw("#test", range.value);
+    })
+</script>
+</body>
+</html>

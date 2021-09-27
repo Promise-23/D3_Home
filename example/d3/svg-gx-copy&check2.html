@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>广西-抄核收</title>
+    <style>
+    #test {
+        width: 80%;
+        height: 400px;
+        margin: 0 auto;
+        background-color:black;
+    }
+
+	.cls-1, .cls-2, .cls-4, .cls-5 {
+        fill: none;
+      }
+
+      .cls-1 {
+        stroke: #fec;
+        opacity: 0.4;
+      }
+
+      .cls-1, .cls-4, .cls-5 {
+        stroke-width: 1px;
+      }
+
+      .cls-2 {
+        stroke: #NaNNaNNaN;
+        stroke-width: 5px;
+        stroke-dasharray: 2.5 2.5;
+      }
+
+      .cls-3 {
+        fill: #fec;
+      }
+
+      .cls-4, .cls-5 {
+        stroke: #6cf;
+      }
+
+      .cls-4 {
+        fill-rule: evenodd;
+      }
+
+      .cls-6 {
+        fill: #6cf;
+        opacity: 0.05;
+      }
+
+      .cls-7 {
+        fill: #6ff;
+        opacity: 0.1;
+      }
+
+      .cls-10, .cls-8 {
+        font-size: 20px;
+      }
+
+      .cls-8 {
+        opacity: 0.8;
+      }
+
+      .cls-10, .cls-11, .cls-8, .cls-9 {
+        fill: #fff;
+      }
+
+      .cls-11, .cls-8 {
+        font-family: "Microsoft YaHei";
+      }
+
+      .cls-9 {
+        font-size: 32px;
+      }
+
+      .cls-10, .cls-9 {
+        font-family: Impact;
+      }
+
+      .cls-11 {
+        font-size: 16px;
+        font-weight: 700;
+      }
+    </style>
+</head>
+<body>
+<div id="test">
+<svg id="组_11" data-name="组 11" xmlns="http://www.w3.org/2000/svg" width="224.5" height="129" viewBox="0 0 224.5 129">
+<defs>
+    
+  </defs>
+  <g id="组_11_拷贝" data-name="组 11 拷贝">
+    <circle id="椭圆_1020_拷贝" data-name="椭圆 1020 拷贝" class="cls-1" cx="47.985" cy="81" r="29.925"/>
+    <circle id="椭圆_1020_拷贝_2" data-name="椭圆 1020 拷贝 2" class="cls-2" cx="47.985" cy="81" r="29.925"/>
+    <circle id="椭圆_1020_拷贝_3" data-name="椭圆 1020 拷贝 3" class="cls-2" cx="47.985" cy="81" r="29.925"/>
+    <circle id="椭圆_1020" data-name="椭圆 1020" class="cls-3" cx="48" cy="81" r="8"/>
+    <path id="形状_1162" data-name="形状 1162" class="cls-4" d="M3853,582l38-53h133" transform="translate(-3805 -502)"/>
+    <rect id="矩形_1162" data-name="矩形 1162" class="cls-5" x="219" y="25" width="5" height="5"/>
+    <rect id="矩形_6" data-name="矩形 6" class="cls-6" x="88" y="35" width="130" height="78"/>
+    <rect id="矩形_6_拷贝_5" data-name="矩形 6 拷贝 5" class="cls-7" x="94" y="41" width="130" height="78"/>
+  </g>
+  <g id="组_766" data-name="组 766">
+    <text id="当月" class="cls-8" x="179.998" y="17">当月</text>
+    <text id="_95.95_" data-name="95.95%" class="cls-9" x="109.998" y="76.001">95.95%</text>
+    <text id="_325.25" data-name="325.25" class="cls-10" x="117.998" y="103">325.25</text>
+    <text id="万" class="cls-11" x="176.999" y="101">万</text>
+  </g>
+</svg>
+
+
+</div>
+
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <!--
+    <div style="color: #fff">
+        <input type="radio" name="flag" value="0" checked>顺
+        <input type="radio" name="flag" value="1">逆
+    </div>
+    -->
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range"/>
+    </div>
+    <button id="change">变</button>
+</div>
+
+<script src="../../js/d3.js"></script>
+<script>
+/*
+    *  @param id  id值，如本例使用的#test
+    *  @param value 变化的最终值
+    */
+    function draw(paramsObj) {
+        var id = paramsObj.id;
+        var progress = paramsObj.value;
+        var svg = d3.select(id).select("svg");
+        var currentValue = svg.attr("data-value") || 0;
+        svg.attr('data-value', progress);
+        var text = d3.select('#center-text');
+        var arcs = d3.arc()
+            .outerRadius(180)
+            .innerRadius(0);
+
+        var clipPath = d3.select(id).select('#layer');
+        clipPath.attr('transform', 'translate(' + 89 + ',' + 53 + ')')
+            .transition()
+            .duration(3000)
+            .attrTween('d', tween).attr("fill","yellow");
+
+        function tween() {
+            var i = d3.interpolate(
+                //{startAngle: valueToRadians(0), endAngle: valueToRadians(0)},
+                //{startAngle: valueToRadians(0), endAngle: valueToRadians(progress)},
+                {startAngle: deg2Radians(90), endAngle: deg2Radians(90)},
+                {startAngle: deg2Radians(90), endAngle: deg2Radians(90)+valueToRadians(progress)},
+            );
+            return function (t) {
+                //console.log(t);
+                text.html(Math.round(t * 100 * progress) / 100 + "%");
+                return arcs(i(t));
+            };
+        }
+
+        function valueToDegrees(value) {
+            return value / 100 * 360
+        }
+
+
+        function valueToRadians(value) {
+            return valueToDegrees(value) * Math.PI / 180;
+        }
+
+        function deg2Radians(deg){
+            return deg* Math.PI/180;
+        }
+    }
+
+    var btn = document.getElementById('change');
+    draw({id: "#test", value: 90});
+    btn.addEventListener("click", function () {
+        var input = document.getElementById('text').value;
+        range.value = input;
+        draw({id: "#test", value: input});
+    }, false);
+    range.addEventListener("change", function () {
+        var input1 = document.getElementById('text');
+        input1.value = range.value;
+        draw({id: "#test", value: range.value});
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>SVG Arc</title>
+    <style>
+        #test {
+            width: 80%;
+            height: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"
+         width="100%" height="100%" viewBox="0 0 860 480">
+        <defs>
+            <style>
+                .cls-1 {
+                    fill: #2d3045;
+                    stroke: #36394d;
+                    stroke-linejoin: round;
+                    stroke-width: 4px;
+                    filter: url(#filter-chain-1);
+                }
+
+                .cls-1, .colorRing, .tick1, .tick2, .indicator {
+                    fill-rule: evenodd;
+                }
+
+                .colorRing, .tick1, .tick2 {
+                    fill: #1c1e2b;
+                }
+
+                .colorRing {
+                    filter: url(#filter-chain-2);
+                    stroke-width: 20px;
+                    fill: #2a77c5;
+                }
+
+                .colorRing2 {
+                    /*fill: url(#filter-chain-2);*/
+                    stroke: red;
+                    stroke-width: 20px;
+                }
+
+                .tick1, .tick {
+                    opacity: 0.65;
+                    fill-rule: evenodd;
+                    fill: #1c1e2b;
+                }
+
+                .indicator {
+                    fill: #fff;
+                    filter: url(#drop-shadow-1);
+                }
+
+                .arcDynamic {
+                    fill-opacity: 0.8;
+                    /*fill: url(#grad);*/
+                }
+
+                .arc {
+                    filter: url(#filter-chain-2);
+                    /*fill: url(#grad);*/
+                }
+            </style>
+
+            <filter id="filter-chain-1" filterUnits="userSpaceOnUse">
+                <feGaussianBlur stdDeviation="6.667" in="SourceAlpha"/>
+                <feComposite/>
+                <feComposite/>
+                <feComposite result="outerGlowBlur"/>
+                <feFlood flood-color="#36394d" flood-opacity="0.4"/>
+                <feComposite operator="in" in2="outerGlowBlur"/>
+                <feBlend in2="SourceGraphic" result="outerGlow"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+                <feOffset dy="2" in="SourceAlpha"/>
+                <feGaussianBlur stdDeviation="5.477" result="innerShadowBlur"/>
+                <feFlood flood-color="#242633" flood-opacity="0.55"/>
+                <feComposite operator="out" in2="innerShadowBlur"/>
+                <feComposite operator="in" in2="SourceAlpha"/>
+                <feBlend mode="multiply" in2="shadowed" result="innerShadow"/>
+            </filter>
+            <filter id="filter-chain-2" filterUnits="userSpaceOnUse" class="variableColor">
+                <feImage x="25.5" y="22.3438" width="806.563" height="806.5942" preserveAspectRatio="none"
+                         xlink:href="#testFeImage"/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="SourceGraphic" result="gradientFill"/>
+                <feGaussianBlur stdDeviation="14.333" in="SourceAlpha" result="innerGlowBlur"/>
+                <feFlood flood-color="#66c4f1" flood-opacity="0.51"/>
+                <feComposite operator="out" in2="innerGlowBlur"/>
+                <feComposite operator="in" in2="SourceAlpha"/>
+                <feBlend in2="gradientFill" result="innerGlow"/>
+            </filter>
+            <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+                <feOffset dy="4" in="SourceAlpha"/>
+                <feGaussianBlur stdDeviation="5.477" result="dropBlur"/>
+                <feFlood flood-color="#7a86d4" flood-opacity="0.56"/>
+                <feComposite operator="in" in2="dropBlur" result="dropShadowComp"/>
+                <feComposite in="SourceGraphic" result="shadowed"/>
+            </filter>
+
+            <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0" stop-color="#3EC0FF" stop-opacity="1" class="linearColor1"></stop>
+                <stop offset="0.5" stop-color="#328bf6" class="linearColor2"></stop>
+                <stop offset="1" stop-color="#3EC0FF" class="linearColor1"></stop>
+            </linearGradient>
+            <rect id="testFeImage" width="100%" height="100%" fill="url(#grad)"/>
+
+            <g id="black_bg">
+                <path class="cls-1"
+                      d="M15.296,434.219 C15.238,431.354 15.187,428.488 15.187,425.609 C15.187,197.179 200.367,12.000 428.797,12.000 C657.227,12.000 842.406,197.179 842.406,425.609 C842.406,428.488 842.356,431.354 842.297,434.219 L842.297,480 L15.296,480 Z"
+                      id="path-1"/>
+            </g>
+        </defs>
+
+        <use xlink:href="#path-1"/>
+        <path class="tick"
+              d="M766.801,428.235 L766.776,423.164 L832.072,423.472 L832.096,428.543 L766.801,428.235 ZM796.381,390.280 L828.932,387.432 L829.382,392.572 L796.831,395.420 L796.381,390.280 ZM791.944,358.297 L824.123,352.623 L825.019,357.704 L792.840,363.378 L791.944,358.297 ZM754.355,336.187 L817.479,319.272 L818.815,324.256 L755.690,341.171 L754.355,336.187 ZM774.813,296.097 L805.518,284.921 L807.282,289.770 L776.577,300.946 L774.813,296.097 ZM762.249,266.353 L791.863,252.543 L794.044,257.219 L764.430,271.029 L762.249,266.353 ZM719.902,254.767 L776.498,222.090 L779.078,226.558 L722.482,259.235 L719.902,254.767 ZM729.604,210.707 L756.370,191.964 L759.329,196.191 L732.563,214.933 L729.604,210.707 ZM709.771,185.228 L734.802,164.224 L738.118,168.176 L713.087,189.180 L709.771,185.228 ZM665.552,185.039 L711.762,138.827 L715.410,142.475 L669.200,188.687 L665.552,185.039 ZM663.836,139.927 L684.840,114.895 L688.792,118.212 L667.788,143.244 L663.836,139.927 ZM638.085,120.450 L656.826,93.683 L661.053,96.642 L642.311,123.409 L638.085,120.450 ZM595.007,131.754 L627.682,75.156 L632.150,77.736 L599.475,134.334 L595.007,131.754 ZM581.991,88.582 L595.800,58.967 L600.476,61.147 L586.667,90.763 L581.991,88.582 ZM552.076,76.434 L563.251,45.728 L568.100,47.492 L556.924,78.199 L552.076,76.434 ZM513.075,98.544 L529.989,35.418 L534.973,36.753 L518.059,99.880 L513.075,98.544 ZM489.646,60.171 L495.320,27.990 L500.401,28.886 L494.727,61.067 L489.646,60.171 ZM457.606,56.179 L460.454,23.627 L465.594,24.077 L462.746,56.629 L457.606,56.179 ZM425.344,22.344 L430.500,22.344 L430.500,87.688 L425.344,87.688 L425.344,22.344 ZM390.247,24.077 L395.386,23.627 L398.234,56.179 L393.095,56.629 L390.247,24.077 ZM355.440,28.886 L360.520,27.990 L366.194,60.171 L361.114,61.067 L355.440,28.886 ZM320.868,36.753 L325.851,35.418 L342.765,98.544 L337.782,99.880 L320.868,36.753 ZM287.741,47.492 L292.589,45.728 L303.764,76.434 L298.917,78.199 L287.741,47.492 ZM255.364,61.147 L260.040,58.967 L273.850,88.582 L269.174,90.763 L255.364,61.147 ZM256.365,134.334 L223.690,77.736 L228.158,75.156 L260.834,131.754 L256.365,134.334 ZM194.788,96.642 L199.014,93.683 L217.756,120.450 L213.530,123.409 L194.788,96.642 ZM167.049,118.212 L171.001,114.895 L192.004,139.927 L188.052,143.244 L167.049,118.212 ZM186.640,188.687 L140.430,142.475 L144.079,138.827 L190.289,185.039 L186.640,188.687 ZM142.753,189.180 L117.722,168.176 L121.039,164.224 L146.070,185.228 L142.753,189.180 ZM123.277,214.933 L96.511,196.191 L99.470,191.964 L126.236,210.707 L123.277,214.933 ZM133.358,259.235 L76.763,226.558 L79.342,222.090 L135.938,254.767 L133.358,259.235 ZM91.410,271.029 L61.797,257.219 L63.977,252.543 L93.591,266.353 L91.410,271.029 ZM79.263,300.946 L48.558,289.770 L50.323,284.921 L81.027,296.097 L79.263,300.946 ZM100.150,341.171 L37.026,324.256 L38.361,319.272 L101.485,336.187 L100.150,341.171 ZM63.001,363.378 L30.822,357.704 L31.718,352.623 L63.897,358.297 L63.001,363.378 ZM59.009,395.420 L26.458,392.572 L26.908,387.432 L59.459,390.280 L59.009,395.420 ZM89.279,428.909 L23.928,428.909 L23.928,423.750 L89.279,423.750 L89.279,428.909 Z"/>
+
+        <g class="arc"></g>
+        <g transform="rotate(-90,430,430)">
+            <path class="indicator"
+                  d="m438.760168,479.7c-27.199,5.002 -53.274,-13.229 -58.24,-40.719c-4.965,-27.49 42.958,-306.182 48.073,-363.937c0,0 45.458,318.333 50.424,345.823c4.966,27.491 -13.058,53.831 -40.257,58.833zm-12.498,-69.188c-13.599,2.501 -22.611,15.671 -20.128,29.416c2.482,13.745 15.52,22.86 29.119,20.36c13.6,-2.502 22.612,-15.672 20.129,-29.417c-2.483,-13.745 -15.521,-22.86 -29.12,-20.359z"/>
+        </g>
+
+    </svg>
+</div>
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range1"/>
+    </div>
+    <button id="change">变</button>
+</div>
+
+
+<script src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../plugins/esl/esl.js"></script>
+<script>
+    // 路径配置
+    require.config({
+        paths: {
+            jquery: '../../js/jquery'
+            , bootstrap: '../../js/bootstrap'
+            , jqueryui: '../../plugins/jquery-ui'
+
+            , echarts3: '../../plugins/echarts3'
+            , zrender2: '../../plugins/zrender2/src'
+            , d3: '../../js/d3.min'
+            , TweenMax: '../../plugins/greensock/TweenMax'
+            , ColorPropsPlugin: '../../plugins/greensock/plugins/ColorPropsPlugin'
+        }, shim: {
+            jqueryui: {
+                exports: "jqueryui",
+                deps: ["jquery"]
+            },
+            bootstrap: {
+                exports: "bootstrap",
+                deps: ["jquery"]
+            }
+            , TweenMax: {
+                exports: "TweenMax",
+                deps: []
+            }
+            , ColorPropsPlugin: {
+                exports: "ColorPropsPlugin",
+                deps: ['TweenMax']
+            }
+        }
+    });
+
+
+    //异步加载
+    require(['d3'], function (d3) {
+        /*
+        *  @param id  id值，如本例使用的#test
+        *  @param angle 变化的最终值
+        *  @param color  颜色值，可选
+        */
+        function redraw(paramsObj) {
+            var path = paramsObj.id;
+            var value = paramsObj.value;
+            var targetValue = paramsObj.targetValue;
+            var color = paramsObj.color;
+
+            var svg = d3.select(path).select("svg");
+            svg.select('.variableColor feFlood').attr('flood-color', changeColor);
+            var currentValue = svg.attr("data-value") || 0;
+            svg.attr('data-value', value);
+            var oldValue2 = currentValue;
+            //重置圆弧
+            svg.selectAll('g.arc path').remove();
+
+            //判断超出量程的问题
+            if (value >= 100) value = 100;
+            else if (value <= 0) value = 0;
+
+            var currentPoint = (valueToDegreesPoint(currentValue || 0));
+
+            var arcInner = d3.arc()
+                .outerRadius(320)
+                .innerRadius(400);
+            var pie = d3.pie();
+            var number = [100];
+
+            function outerArc() {
+                var arcs = svg.select('g.arc')
+                    .data(pie(number));
+                arcs.append("svg:path")
+                    .attr("class", "arcDynamic")
+                    // .attr('fill', changeColor)
+                    .attr("transform", function () {//移动
+                            return "translate(" + 430 + ", " + 430 + ") rotate(270)"
+                        }
+                    )
+                    .transition()                   //设置动画
+                    .duration(1000)                 //持续时间.
+                    .ease(d3.easeBounce)
+                    .attr('fill', changeColor)
+                    .attrTween('d', tweenPieInner)
+            }
+
+            //缓动动画函数
+            function tweenPieInner(b) {
+                b.startAngle = valueToRadians(0);
+                b.endAngle = valueToRadians(value);
+                var i = d3.interpolate(
+                    {startAngle: valueToRadians(0), endAngle: valueToRadians(currentValue || 0)},
+                    b
+                );
+                currentValue = value;
+                //下面的函数就是过渡函数，他是执行多次最终达到想要的状态。
+                return function (t) {
+                    return arcInner(i(t));
+                };
+            }
+
+            //指针旋转
+            function pointerRotate() {
+                var pointer = svg.select(".indicator");
+                pointer.transition()
+                    .duration(1000)
+                    .ease(d3.easeBounce)
+                    .attrTween("transform", function () {
+                        var targetRotation = (valueToDegreesPoint(value));
+                        //现在的角度
+                        var currentRotation = currentPoint || targetRotation;
+                        if (currentPoint === 0) {
+                            currentRotation = 0
+                        }
+                        return function (step) {
+                            var rotation = currentRotation + (targetRotation - currentRotation) * step;
+                            var textValue = (oldValue2 || 0) - ((oldValue2 || 0) - value) * step;
+                            textValue = Math.round(textValue * 100) / 100;  //处理文本小数
+                            svg.select(".textDynamic")         //添加文本
+                                .text(textValue); //文字内容
+                            return " rotate(" + rotation + ", " + 430 + ", " + 430 + ")";   //定义旋转
+                        }
+                    })
+            }
+
+            //设置颜色
+            function changeColor() {
+                if (color) {
+                    if (color.length > 1) {
+                        var a = color[0] || '#66c4f1';
+                        var b = color[1] || '#66c4f1';
+                        if (a === b) {
+                            return a;
+                        }
+                        var compute = d3.interpolate(a, b);
+                        var linear = d3.scaleLinear().domain([0, 100]).range([0, 1]);
+                        return compute(linear(value));
+                    } else {
+                        return color[0] || '#66c4f1'
+                    }
+                } else {
+                    return '#66c4f1'
+                }
+            }
+
+            function valueToDegreesPoint(value) {
+                return value / 100 * 180;
+            }
+
+            outerArc()
+            pointerRotate()
+        }
+
+        redraw({id: "#test", value: 50});
+
+
+        var btn = document.getElementById('change');
+        var range1 = document.getElementById('range1');
+        btn.addEventListener("click", function () {
+            var input = document.getElementById('text').value;
+            range1.value = input;
+            redraw({id: "#test", value: input, color: ['#f00']});
+        }, false);
+
+        range1.addEventListener("change", function () {
+            var input1 = document.getElementById('text');
+            input1.value = range1.value;
+            redraw({id: '#test', value: range1.value});
+        });
+
+    });
+
+
+    function valueToRadians(value) {
+        return valueToDegrees(value) * Math.PI / 180;
+    }
+
+    function valueToDegrees(value) {
+        return value / 100 * 180;
+    }
+
+
+</script>
+
+
+</body>
+
+
+</html>

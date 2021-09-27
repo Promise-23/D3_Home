@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计量覆盖率</title>
+    <style>
+        body {
+            background: #191067;
+        }
+
+        #myForm {
+            position: absolute;
+            left: 20%;
+            top: 60%;
+        }
+
+        #myForm div {
+            margin: 20px 0;
+        }
+
+        #test {
+            width: 80%;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        #test1 {
+            width: 100%;
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+<div id="test">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid"
+         width="100%" height="100%" viewBox="0 0 339 360">
+        <defs>
+            <style>
+                .cls-1 {
+                    fill: red;
+                    fill-opacity: 1;
+                }
+
+                .cls-10, .cls-2, .cls-3, .cls-5, .cls-7 {
+                    fill: #fff;
+                }
+
+                .cls-2 {
+                    fill: #423983;
+                    stroke: #423983;
+                }
+
+                .cls-2, .cls-3 {
+                    fill-rule: evenodd;
+                }
+
+                .cls-3 {
+                    filter: url(#gradient-overlay-1);
+                }
+
+                .cls-4, .cls-5, .cls-7 {
+                    font-size: 24px;
+                }
+
+                .cls-10, .cls-5 {
+                    font-family: "Arial";
+                }
+
+                .cls-6 {
+                    fill: #8a86b3;
+                }
+
+                .cls-7 {
+                    font-family: "Microsoft YaHei";
+                }
+
+                .cls-8 {
+                    fill: #3dcd78;
+                }
+
+                .cls-10, .cls-9 {
+                    font-size: 48px;
+                }
+
+                .cls-9 {
+                    text-anchor: middle;
+                }
+
+                .cls-11 {
+                    font-size: 30px;
+                }
+
+            </style>
+
+            <filter id="gradient-overlay-1" filterUnits="userSpaceOnUse">
+                <feImage x="15" y="46" width="300" height="264" preserveAspectRatio="none"
+                         xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI2NCI+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeTE9IjEzMiIgeDI9IjMwMCIgeTI9IjEzMiI+CiAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMzNiM2NjIi8+CiAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjM2RjZDc4Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiLz48L3N2Zz4="/>
+                <feComposite operator="in" in2="SourceGraphic"/>
+                <feBlend in2="SourceGraphic" result="gradientFill"/>
+            </filter>
+            <clipPath id="clipPath">
+                <path id="layer"/>
+            </clipPath>
+        </defs>
+        <g>
+            <path d="M266.319,306.580 C264.487,308.672 261.805,310.000 258.807,310.000 C253.288,310.000 248.814,305.523 248.814,300.000 C248.814,297.257 249.919,294.774 251.705,292.968 L251.648,292.903 C278.251,269.099 295.000,234.508 295.000,196.000 C295.000,124.203 236.797,66.000 165.000,66.000 C93.203,66.000 35.000,124.203 35.000,196.000 C35.000,234.508 51.748,269.099 78.351,292.903 L78.201,293.072 C79.931,294.870 81.000,297.308 81.000,300.000 C81.000,305.523 76.523,310.000 71.000,310.000 C67.687,310.000 64.759,308.382 62.939,305.901 C33.458,278.510 15.000,239.416 15.000,196.000 C15.000,113.157 82.157,46.000 165.000,46.000 C247.842,46.000 315.000,113.157 315.000,196.000 C315.000,239.778 296.231,279.159 266.319,306.580 Z"
+                  class="cls-3"/>
+        </g>
+        <circle cx="164.906" cy="196" r="1" class="cls-1"/>
+        <g clip-path="url(#clipPath)">
+            <path d="M266.319,306.580 C264.487,308.672 261.805,310.000 258.807,310.000 C253.288,310.000 248.814,305.523 248.814,300.000 C248.814,297.257 249.919,294.774 251.705,292.968 L251.648,292.903 C278.251,269.099 295.000,234.508 295.000,196.000 C295.000,124.203 236.797,66.000 165.000,66.000 C93.203,66.000 35.000,124.203 35.000,196.000 C35.000,234.508 51.748,269.099 78.351,292.903 L78.201,293.072 C79.931,294.870 81.000,297.308 81.000,300.000 C81.000,305.523 76.523,310.000 71.000,310.000 C67.687,310.000 64.759,308.382 62.939,305.901 C33.458,278.510 15.000,239.416 15.000,196.000 C15.000,113.157 82.157,46.000 165.000,46.000 C247.842,46.000 315.000,113.157 315.000,196.000 C315.000,239.778 296.231,279.159 266.319,306.580 Z"
+                  class="cls-2"/>
+            <path d="M266.319,306.580 C264.487,308.672 261.805,310.000 258.807,310.000 C253.288,310.000 248.814,305.523 248.814,300.000 C248.814,297.257 249.919,294.774 251.705,292.968 L251.648,292.903 C278.251,269.099 295.000,234.508 295.000,196.000 C295.000,124.203 236.797,66.000 165.000,66.000 C93.203,66.000 35.000,124.203 35.000,196.000 C35.000,234.508 51.748,269.099 78.351,292.903 L78.201,293.072 C79.931,294.870 81.000,297.308 81.000,300.000 C81.000,305.523 76.523,310.000 71.000,310.000 C67.687,310.000 64.759,308.382 62.939,305.901 C33.458,278.510 15.000,239.416 15.000,196.000 C15.000,113.157 82.157,46.000 165.000,46.000 C247.842,46.000 315.000,113.157 315.000,196.000 C315.000,239.778 296.231,279.159 266.319,306.580 Z"
+                  class="cls-2"/>
+        </g>
+        <g>
+            <path d="M231.746,283.415 L229.091,280.416 C254.552,261.055 271.000,230.454 271.000,196.000 C271.000,137.458 223.542,90.000 165.000,90.000 C106.458,90.000 59.000,137.458 59.000,196.000 C59.000,230.454 75.448,261.055 100.909,280.415 L98.254,283.415 C71.969,263.314 55.000,231.646 55.000,196.000 C55.000,135.249 104.249,86.000 165.000,86.000 C225.751,86.000 275.000,135.249 275.000,196.000 C275.000,231.646 258.031,263.314 231.746,283.415 Z"
+                  class="cls-2"/>
+            <text transform="translate(35 328)" class="cls-4">
+                <tspan class="cls-5">0</tspan>
+            </text>
+            <circle cx="61.16" cy="324.23" r="6" class="cls-6"/>
+            <circle cx="9.46" cy="140.9" r="6" class="cls-6"/>
+            <text transform="translate(141 18)" class="cls-4">
+                <tspan class="cls-5">50%</tspan>
+            </text>
+            <circle cx="165" cy="31" r="5.984" class="cls-6"/>
+            <circle cx="320.54" cy="141" r="6" class="cls-6"/>
+            <text x="278" y="325" class="cls-4 targetName">
+                <tspan class="cls-7">目标</tspan>
+            </text>
+            <text x="278" y="354" class="cls-4 targetValue">
+                <tspan class="cls-5">100%</tspan>
+            </text>
+            <circle cx="268.84" cy="324.32" r="6" class="cls-8 targetCircle"/>
+        </g>
+        <circle class="lighting-dots"></circle>
+        <text x="165" y="207" class="cls-9">
+            <tspan class="cls-9">
+                <tspan class="cls-10" id="center-text">74.23
+                    <tspan class="cls-11">%</tspan>
+                </tspan>
+            </tspan>
+        </text>
+    </svg>
+</div>
+
+<div id="myForm">
+    <input type="text" id="text" placeholder="请输入0-100的数"/>
+    <div>
+        <input type="radio" name="flag" value="0" checked>顺
+        <input type="radio" name="flag" value="1">逆
+    </div>
+    <div>
+        <input type="range" name="points" min="0" max="100%" value="80%" id="range"/>
+    </div>
+    <button id="change">变</button>
+</div>
+<script>
+    /**
+     *  @param:id 包含svg的父元素
+     *  @param:progress 百分比
+     *  @param:tValue 目标值
+     */
+    function draw(id, progress, tValue) {
+        let svg = document.querySelector(id).querySelector('svg'),
+            path = svg.getElementById('layer'),
+            lightingDots = svg.getElementsByClassName('lighting-dots')[0],
+            text = svg.getElementById('center-text');
+        path.setAttribute('transform', 'translate(' + 165 + ',' + 196 + ')');
+        let x, y, cx, cy, lack, antiLack;
+        let x0 = (Math.sin(-144 * Math.PI / 180) * 280).toFixed(2),
+            y0 = (-Math.cos(-144 * (Math.PI / 180)) * 280).toFixed(2);
+        if (progress > 100) {
+            progress = 100;
+        } else if (progress < 0) {
+            progress = 0;
+        }
+        {
+            let degrees = progress * (282 / 100) + 218;
+            let rad = degrees * (Math.PI / 180);
+            x = parseInt(Math.sin(rad) * 280);
+            y = parseInt(-Math.cos(rad) * 280);
+            cx = (Math.sin(rad) * 140 + 165).toFixed(2);
+            cy = (-Math.cos(rad) * 140 + 196).toFixed(2);
+            let lenghty = Number(degrees > 180);
+            let aflag = Number(degrees <= 180);
+            lack = ['M', 0, 0, 'L', x0, y0, 'A', 280, 280, 1, 1, 0, x, y, 'z'];
+        }
+        if (tValue != undefined) {
+            let degrees = tValue * (282 / 100) + 219;
+            let rad = degrees * (Math.PI / 180);
+            tx = (Math.sin(rad) * 180 + 165).toFixed(2);
+            ty = (-Math.cos(rad) * 180 + 196).toFixed(2);
+            tx1 = (Math.sin(rad) * 165 + 165).toFixed(2);
+            ty1 = (-Math.cos(rad) * 165 + 196).toFixed(2);
+
+            let targetName = svg.querySelector('.targetName');
+            let targetValue = svg.querySelector('.targetValue');
+            let targetCircle = svg.querySelector('.targetCircle');
+            targetValue.setAttribute('x', tx);
+            targetValue.setAttribute('y', (parseInt(ty) + 25));
+            targetValue.innerHTML = '<tspan class="cls-5">'+ tValue + '%</tspan>';
+            targetName.setAttribute('x', tx);
+            targetName.setAttribute('y', ty);
+            targetCircle.setAttribute('cx', tx1);
+            targetCircle.setAttribute('cy', ty1);
+        }
+        let descriptions = lack;
+        path.setAttribute('d', descriptions.join(' '));
+        lightingDots.setAttribute('cx', cx);
+        lightingDots.setAttribute('cy', cy);
+        lightingDots.setAttribute('r', 10);
+        if (progress > 50) {
+            color = "#3dcc7b";
+        } else if (progress > 0) {
+            color = "#35b8bb";
+        } else {
+            color = "transparent";
+        }
+        lightingDots.setAttribute('fill', color);
+        text.innerHTML = Math.round(progress * 100) / 100 + "%";
+    }
+</script>
+<script>
+    draw("#test", 90);
+    let btn = document.getElementById('change');
+    btn.addEventListener("click", function () {
+        let input = document.getElementById('text').value;
+        range.value = input;
+        draw("#test", input);
+    }, false);
+    range.addEventListener("change", function () {
+        let input1 = document.getElementById('text');
+        input1.value = range.value;
+        draw("#test", range.value);
+    }, false)
+</script>
+</body>
+</html>
